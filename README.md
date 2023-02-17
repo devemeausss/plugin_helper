@@ -4,10 +4,7 @@ A plugin for boilerplate mobile
 ## Configuration
 In pubspec.yaml
 ```
-plugin_helper:
-  git:
-    url: https://github.com/tharro/plugin_helper
-    ref: master
+plugin_helper: ^0.0.1
 ```
 
 ## Usage
