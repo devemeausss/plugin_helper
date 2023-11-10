@@ -11,7 +11,7 @@ This will add a line like this to your package's pubspec.yaml (and run an implic
 dependencies:
   plugin_helper:
     git:
-      url: https://github.com/tharro/plugin_helper
+      url: https://github.com/devemeausss/plugin_helper
       ref: ref_id
 ```
 
