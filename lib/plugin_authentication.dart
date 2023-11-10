@@ -1,11 +1,9 @@
-// import 'dart:convert';
+import 'dart:io';
 
-// import 'package:amazon_cognito_identity_dart_2/cognito.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-// import 'package:plugin_helper/plugin_app_environment.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-//This plugin had used for authentication by AWS
 class MyPluginAppConstraints {
   static const String user = 'USER';
   static const String token = 'TOKEN';
@@ -19,287 +17,147 @@ class MyPluginAppConstraints {
   static const String language = 'LANGUAGE';
 }
 
+/// This plugin helps manage user access tokens.
 class MyPluginAuthentication {
-  // static final userPool = CognitoUserPool(
-  //   MyPluginAppEnvironment().userPoolId!,
-  //   MyPluginAppEnvironment().clientId!,
-  // );
-
   static const storage = FlutterSecureStorage();
 
-  // static Future<String?> loginCognito(
-  //     {required String userName, required String password}) async {
-  //   final cognitoUser = CognitoUser(userName, userPool);
-  //   final authDetails = AuthenticationDetails(
-  //     username: userName,
-  //     password: password,
-  //   );
-  //   CognitoUserSession? session;
-  //   try {
-  //     session = await cognitoUser.authenticateUser(authDetails);
-  //     await persistUser(
-  //         userId: userName,
-  //         token: session?.getIdToken().getJwtToken() ?? '',
-  //         refreshToken: session?.getRefreshToken()?.getToken() ?? '');
-  //   } catch (e) {
-  //     rethrow;
-  //   }
-  //   return session?.getIdToken().getJwtToken();
-  // }
-
-  // static Future<String> signUpCognito({
-  //   required String id,
-  //   required String password,
-  //   required List<AttributeArg> userAttributes,
-  // }) async {
-  //   final attributes = userAttributes;
-  //   try {
-  //     await userPool.signUp(
-  //       id,
-  //       password,
-  //       userAttributes: attributes,
-  //     );
-  //     return id;
-  //   } catch (e) {
-  //     rethrow;
-  //   }
-  // }
-
-  // static Future<bool> verifyCodeCognito(
-  //     {String? userName, String? code}) async {
-  //   final cognitoUser = CognitoUser(userName, userPool);
-  //   try {
-  //     return await cognitoUser.confirmRegistration(code!);
-  //   } catch (e) {
-  //     rethrow;
-  //   }
-  // }
-
-  // static Future<bool> resendCodeCognito({String? userName}) async {
-  //   final cognitoUser = CognitoUser(userName, userPool);
-  //   try {
-  //     await cognitoUser.resendConfirmationCode();
-  //     return true;
-  //   } catch (e) {
-  //     rethrow;
-  //   }
-  // }
-
-  // static Future<bool> forgotPassword({required String userName}) async {
-  //   final cognitoUser = CognitoUser(userName, userPool);
-  //   try {
-  //     await cognitoUser.forgotPassword();
-  //     return true;
-  //   } catch (e) {
-  //     rethrow;
-  //   }
-  // }
-
-  // static Future<bool> confirmNewPassword(
-  //     {required String userName,
-  //     required String code,
-  //     required String newPassword}) async {
-  //   final cognitoUser = CognitoUser(userName, userPool);
-  //   try {
-  //     await cognitoUser.confirmPassword(code, newPassword);
-  //     return true;
-  //   } catch (e) {
-  //     rethrow;
-  //   }
-  // }
-
-  // static Future<bool> updatePassword(
-  //     {required String userName,
-  //     required String currentPassword,
-  //     required String newPassword}) async {
-  //   final cognitoUser = CognitoUser(userName, userPool);
-  //   final authDetails = AuthenticationDetails(
-  //     username: userName,
-  //     password: currentPassword,
-  //   );
-  //   await cognitoUser.authenticateUser(authDetails);
-  //   try {
-  //     await cognitoUser.changePassword(currentPassword, newPassword);
-  //     return true;
-  //   } catch (e) {
-  //     rethrow;
-  //   }
-  // }
-
-  // static Future<bool> resendCodeAttribute({required String name}) async {
-  //   Users userInfo = await getUser();
-  //   final cognitoUser = CognitoUser(userInfo.userId, userPool);
-  //   await cognitoUser.getAttributeVerificationCode(name);
-  //   return true;
-  // }
-
-  // static Future<bool> verifyAttribute(
-  //     {required String confirmationCode,
-  //     required String attributeName,
-  //     required String value}) async {
-  //   Users userInfo = await getUser();
-  //   final cognitoUser = CognitoUser(userInfo.userId, userPool);
-  //   return await cognitoUser.verifyAttribute(attributeName, confirmationCode);
-  // }
-
-  // static Future<bool> updateAttribute(
-  //     {required String attributeName,
-  //     required String value,
-  //     CognitoUser? cognitoUser}) async {
-  //   CognitoUser? cognito;
-  //   if (cognitoUser != null) {
-  //     cognito = cognitoUser;
-  //   } else {
-  //     Users userInfo = await getUser();
-  //     cognito = CognitoUser(userInfo.userId, userPool);
-  //   }
-  //   return cognito.updateAttributes(
-  //       [CognitoUserAttribute(name: attributeName, value: value)]);
-  // }
-
-  // static Future<void> refreshToken() async {
-  //   Users userInfo = await getUser();
-  //   final cognitoUser = CognitoUser(userInfo.userId!, userPool);
-  //   try {
-  //     final refreshToken = CognitoRefreshToken(userInfo.refreshToken);
-  //     CognitoUserSession? cognitoUserSession =
-  //         await cognitoUser.refreshSession(refreshToken);
-  //     await persistUser(
-  //         userId: userInfo.userId!,
-  //         token: cognitoUserSession?.getIdToken().getJwtToken() ?? '',
-  //         refreshToken:
-  //             cognitoUserSession?.getRefreshToken()?.getToken() ?? '');
-  //   } catch (e) {
-  //     rethrow;
-  //   }
-  // }
-
+  /// Check whether token exists or not.
   static Future<bool> hasToken() async {
+    final prefs = await SharedPreferences.getInstance();
     try {
-      String? token = await storage.read(key: MyPluginAppConstraints.token);
+      String? token;
+      if (!kIsWeb && Platform.isLinux) {
+        token = prefs.getString(MyPluginAppConstraints.token);
+      }
+      token = await storage.read(key: MyPluginAppConstraints.token);
+
       if (token != null) {
         return true;
       } else {
         return false;
       }
     } catch (e) {
-      await storage.deleteAll();
+      if (!kIsWeb && Platform.isLinux) {
+        await prefs.clear();
+      } else {
+        await storage.deleteAll();
+      }
       return false;
     }
   }
 
+  /// Check whether token is valid or not.
   static Future<bool> checkTokenValidity() async {
     final users = await getUser();
-    // if (MyPluginAppEnvironment().isCognito) {
-    //   if (DateTime.now()
-    //       .add(const Duration(minutes: 1))
-    //       .isBefore(_tokenExpiration(users.token!))) {
-    //     return true;
-    //   }
-    // } else {
-    if (DateTime.now()
-        .add(const Duration(minutes: 5))
-        .isBefore(DateTime.parse(users.expiredToken!))) {
+    if (users.expiredToken != null &&
+        users.expiredToken! >
+            DateTime.now()
+                .add(const Duration(minutes: 5))
+                .toUtc()
+                .millisecondsSinceEpoch) {
       return true;
     }
-    // }
 
     return false;
   }
 
+  /// Check whether the refresh token is valid or not.
   static Future<bool> checkRefreshTokenValidity() async {
     final users = await getUser();
-    if (DateTime.now()
-        .add(const Duration(minutes: 5))
-        .isBefore(DateTime.parse(users.expiredRefreshToken!))) {
+    if (users.expiredRefreshToken != null &&
+        users.expiredRefreshToken! >
+            DateTime.now()
+                .add(const Duration(minutes: 5))
+                .toUtc()
+                .millisecondsSinceEpoch) {
       return true;
     }
     return false;
   }
 
-  // static DateTime _tokenExpiration(String token) {
-  //   final parts = token.split('.');
-
-  //   if (parts.length != 3) {
-  //     throw 'tokenInvalid';
-  //   }
-
-  //   final payloadMap = json.decode(_decodeBase64(parts[1]));
-
-  //   if (payloadMap is! Map<String, dynamic>) {
-  //     throw 'payloadInvalid';
-  //   }
-
-  //   return DateTime.fromMillisecondsSinceEpoch(payloadMap['exp'] * 1000);
-  // }
-
-  // static String _decodeBase64(String str) {
-  //   var output = str.replaceAll('-', '+').replaceAll('_', '/');
-
-  //   switch (output.length % 4) {
-  //     case 0:
-  //       break;
-  //     case 2:
-  //       output += '==';
-  //       break;
-  //     case 3:
-  //       output += '=';
-  //       break;
-  //     default:
-  //       throw 'base64Invalid';
-  //   }
-
-  //   return utf8.decode(base64Url.decode(output));
-  // }
-
+  /// Retrieve user's token from local storage
   static Future<Users> getUser() async {
     try {
-      String? user = await storage.read(key: MyPluginAppConstraints.user);
-      String? token = await storage.read(key: MyPluginAppConstraints.token);
-      String? refreshToken =
-          await storage.read(key: MyPluginAppConstraints.refreshToken);
-      String? expiredToken =
-          await storage.read(key: MyPluginAppConstraints.expired);
-      String? expiredRefreshToken =
-          await storage.read(key: MyPluginAppConstraints.expiredRefresh);
+      String? user, token, refreshToken, expiredToken, expiredRefreshToken;
+      if (!kIsWeb && Platform.isLinux) {
+        final prefs = await SharedPreferences.getInstance();
+        user = prefs.getString(MyPluginAppConstraints.user);
+        token = prefs.getString(MyPluginAppConstraints.token);
+        refreshToken = prefs.getString(MyPluginAppConstraints.refreshToken);
+        expiredToken = prefs.getString(MyPluginAppConstraints.expired);
+        expiredRefreshToken =
+            prefs.getString(MyPluginAppConstraints.expiredRefresh);
+      } else {
+        user = await storage.read(key: MyPluginAppConstraints.user);
+        token = await storage.read(key: MyPluginAppConstraints.token);
+        refreshToken =
+            await storage.read(key: MyPluginAppConstraints.refreshToken);
+        expiredToken = await storage.read(key: MyPluginAppConstraints.expired);
+        expiredRefreshToken =
+            await storage.read(key: MyPluginAppConstraints.expiredRefresh);
+      }
+
       return Users(
         userId: user,
         token: token,
         refreshToken: refreshToken,
-        expiredToken: expiredToken,
-        expiredRefreshToken: expiredRefreshToken,
+        expiredToken:
+            expiredToken != null ? int.tryParse(expiredToken) ?? 0 : 0,
+        expiredRefreshToken: expiredRefreshToken != null
+            ? int.tryParse(expiredRefreshToken) ?? 0
+            : 0,
       );
     } catch (e) {
       return Users();
     }
   }
 
+  /// Save user's token to local storage
   static Future<void> persistUser({
     required String userId,
     required String token,
     required String refreshToken,
-    String? expiredToken,
-    String? expiredRefreshToken,
+    required int expiredToken,
+    required int expiredRefreshToken,
   }) async {
-    await storage.write(key: MyPluginAppConstraints.user, value: userId);
-    await storage.write(key: MyPluginAppConstraints.token, value: token);
-    await storage.write(
-        key: MyPluginAppConstraints.refreshToken, value: refreshToken);
-    await storage.write(
-        key: MyPluginAppConstraints.expired, value: expiredToken);
-    await storage.write(
-        key: MyPluginAppConstraints.expiredRefresh, value: expiredRefreshToken);
+    if (!kIsWeb && Platform.isLinux) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(MyPluginAppConstraints.user, userId);
+      await prefs.setString(MyPluginAppConstraints.token, token);
+      prefs.setString(MyPluginAppConstraints.refreshToken, refreshToken);
+      prefs.setString(MyPluginAppConstraints.expired, expiredToken.toString());
+      await prefs.setString(MyPluginAppConstraints.expiredRefresh,
+          expiredRefreshToken.toString());
+    } else {
+      await storage.write(key: MyPluginAppConstraints.user, value: userId);
+      await storage.write(key: MyPluginAppConstraints.token, value: token);
+      await storage.write(
+          key: MyPluginAppConstraints.refreshToken, value: refreshToken);
+      await storage.write(
+          key: MyPluginAppConstraints.expired, value: expiredToken.toString());
+      await storage.write(
+          key: MyPluginAppConstraints.expiredRefresh,
+          value: expiredRefreshToken.toString());
+    }
   }
 
+  /// Delete user's token in local storage
   static Future<void> deleteUser() async {
-    await storage.delete(key: MyPluginAppConstraints.user);
-    await storage.delete(key: MyPluginAppConstraints.token);
-    await storage.delete(key: MyPluginAppConstraints.refreshToken);
-    await storage.delete(key: MyPluginAppConstraints.expired);
-    await storage.delete(key: MyPluginAppConstraints.expiredRefresh);
+    if (kIsWeb || !Platform.isLinux) {
+      await storage.delete(key: MyPluginAppConstraints.user);
+      await storage.delete(key: MyPluginAppConstraints.token);
+      await storage.delete(key: MyPluginAppConstraints.refreshToken);
+      await storage.delete(key: MyPluginAppConstraints.expired);
+      await storage.delete(key: MyPluginAppConstraints.expiredRefresh);
+      return;
+    }
+
     final prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
-    return;
+    await prefs.remove(MyPluginAppConstraints.user);
+    await prefs.remove(MyPluginAppConstraints.token);
+    await prefs.remove(MyPluginAppConstraints.refreshToken);
+    await prefs.remove(MyPluginAppConstraints.expired);
+    await prefs.remove(MyPluginAppConstraints.expiredRefresh);
   }
 }
 
@@ -307,8 +165,8 @@ class Users {
   final String? userId;
   final String? token;
   final String? refreshToken;
-  final String? expiredToken;
-  final String? expiredRefreshToken;
+  final int? expiredToken;
+  final int? expiredRefreshToken;
 
   Users(
       {this.userId,

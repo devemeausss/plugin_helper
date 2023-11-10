@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'index.dart';
 
 /// A platform-aware Scaffold which encapsulates the common behaviour between
@@ -10,7 +11,7 @@ class AdaptiveBottomNavigationScaffold extends StatefulWidget {
   final Widget? customBottomBar;
   final Color selectedItemColor, unselectedItemColor;
   final Function(int)? onTabSelected;
-  final int? indexDisableTap;
+  final List<int>? indexDisableTap;
   final Color? backgroundColor;
   final EdgeInsets? padding;
   final BoxDecoration? decoration;
@@ -18,6 +19,7 @@ class AdaptiveBottomNavigationScaffold extends StatefulWidget {
   final double elevation;
   final bool extendBody;
   final bool showSelectedLabels, showUnselectedLabels;
+  final double? height;
 
   const AdaptiveBottomNavigationScaffold({
     required this.navigationBarItems,
@@ -37,6 +39,7 @@ class AdaptiveBottomNavigationScaffold extends StatefulWidget {
     this.showSelectedLabels = true,
     this.showUnselectedLabels = true,
     this.indexDisableTap,
+    this.height,
   }) : super(key: key);
 
   @override
@@ -84,6 +87,7 @@ class AdaptiveBottomNavigationScaffoldState
         extendBody: widget.extendBody,
         showSelectedLabels: widget.showSelectedLabels,
         showUnselectedLabels: widget.showUnselectedLabels,
+        height: widget.height,
       );
 
   /// Called when a tab selection occurs.
@@ -92,7 +96,7 @@ class AdaptiveBottomNavigationScaffoldState
 
     if (widget.indexDisableTap == null ||
         (widget.indexDisableTap != null &&
-            newIndex != widget.indexDisableTap)) {
+            !widget.indexDisableTap!.contains(newIndex))) {
       if (_currentlySelectedIndex == newIndex) {
         // If the user is re-selecting the tab, the common
         // behavior is to empty the stack.

@@ -9,10 +9,11 @@ class MyWidgetPhoneNumber extends StatefulWidget {
   final bool isEnabled;
   final Function(PhoneNumber)? onInputChanged;
   final Function(bool)? onInputValidated;
-  final Function()? onFieldSubmitted;
+  final VoidCallback? onFieldSubmitted;
   final Function(PhoneNumber)? onSaved;
   final bool autoFocus;
   final FocusNode? focusNode;
+  final Function(bool)? onFocus;
   final bool? hasError;
   final List<String>? countries;
   final bool isLTR;
@@ -27,6 +28,11 @@ class MyWidgetPhoneNumber extends StatefulWidget {
   final BoxDecoration? boxDecorationAll;
   final double spaceBetweenSelectorAndTextField;
   final double paddingIconRight, spaceBetweenLabelAndPhoneNumber;
+  final Widget? iconClose;
+  final double borderRadius;
+  final Color? focusColor, unFocusColor;
+  final Color? cursorColor;
+  final InputDecoration? searchBoxDecoration;
   const MyWidgetPhoneNumber(
       {Key? key,
       this.label,
@@ -61,7 +67,14 @@ class MyWidgetPhoneNumber extends StatefulWidget {
       required this.hintStyle,
       required this.selectorTextStyle,
       this.contentPaddingInputPhoneNumber,
-      this.height = 44})
+      this.height = 44,
+      this.iconClose,
+      this.borderRadius = 34,
+      this.focusColor,
+      this.unFocusColor,
+      this.onFocus,
+      this.cursorColor,
+      this.searchBoxDecoration})
       : super(key: key);
   @override
   _WidgetPhoneNumberState createState() => _WidgetPhoneNumberState();
@@ -71,6 +84,7 @@ class _WidgetPhoneNumberState extends State<MyWidgetPhoneNumber> {
   bool _showIcon = false;
   bool _hasFocus = false;
   bool _isValidate = true;
+
   @override
   void initState() {
     widget.controller!.addListener(() {
@@ -88,11 +102,16 @@ class _WidgetPhoneNumberState extends State<MyWidgetPhoneNumber> {
         }
       }
     });
+
     widget.focusNode!.addListener(() {
       if (mounted) {
         setState(() {
           _hasFocus = widget.focusNode!.hasFocus;
         });
+      }
+
+      if (widget.onFocus != null) {
+        widget.onFocus!(widget.focusNode!.hasFocus);
       }
     });
     super.initState();
@@ -120,26 +139,28 @@ class _WidgetPhoneNumberState extends State<MyWidgetPhoneNumber> {
                     color: Colors.white,
                     border: Border.all(
                         color: _hasFocus
-                            ? const Color(0xffFEC02D)
-                            : const Color(0xffdddddd)),
-                    borderRadius: BorderRadius.circular(34),
+                            ? widget.focusColor ?? const Color(0xffFEC02D)
+                            : widget.unFocusColor ?? const Color(0xffdddddd)),
+                    borderRadius: BorderRadius.circular(widget.borderRadius),
                   ),
               height: widget.height,
               padding: widget.padding ?? EdgeInsets.zero,
               child: InternationalPhoneNumberInput(
+                iconClose: widget.iconClose,
                 countries: widget.countries,
                 initialValue: widget.initialValue ??
                     PhoneNumber(isoCode: 'AU', dialCode: '+61'),
-                searchBoxDecoration: InputDecoration(
-                    enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.grey[300]!)),
-                    border: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.grey[300]!)),
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey[300]!),
-                    ),
-                    labelText: widget.labelSearch,
-                    labelStyle: widget.labelStyle),
+                searchBoxDecoration: widget.searchBoxDecoration ??
+                    InputDecoration(
+                        enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey[300]!)),
+                        border: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey[300]!)),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.grey[300]!),
+                        ),
+                        labelText: widget.labelSearch,
+                        labelStyle: widget.hintStyle),
                 onInputChanged: (PhoneNumber number) {
                   if (widget.onInputChanged != null) {
                     widget.onInputChanged!(number);
@@ -154,7 +175,7 @@ class _WidgetPhoneNumberState extends State<MyWidgetPhoneNumber> {
                     widget.onInputValidated!(value);
                   }
                 },
-                cursorColor: Colors.black,
+                cursorColor: widget.cursorColor ?? Colors.black,
                 spaceBetweenSelectorAndTextField:
                     widget.spaceBetweenSelectorAndTextField,
                 textAlignVertical: TextAlignVertical.top,

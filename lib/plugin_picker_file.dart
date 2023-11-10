@@ -4,11 +4,12 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+/// This plugin helper retrieves file in the device
 class MyPluginPickerFile {
   static Future<PickedFile?>? pickerFileCustom() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles();
     if (result != null) {
-      PickedFile file = PickedFile(result.files.single.path!);
+      PickedFile file = PickedFile(result.files.first.path!);
       return file;
     }
     return null;
@@ -60,8 +61,8 @@ class MyPluginPickerFile {
 
   static Future<List<XFile>?>? uploadMultiImage({
     required BuildContext context,
-    Function()? onStartLoading,
-    Function()? onEndLoading,
+    VoidCallback? onStartLoading,
+    VoidCallback? onEndLoading,
     required Function(String code) onError,
     double maxWidth = 1024,
     double maxHeight = 1024,

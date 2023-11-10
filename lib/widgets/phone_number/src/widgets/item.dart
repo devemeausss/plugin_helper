@@ -14,6 +14,9 @@ class Item extends StatelessWidget {
   final Widget? iconLeft;
   final EdgeInsets? flagPadding;
   final double? heightItem;
+  final double? radius;
+  final double? width, height;
+
   const Item({
     Key? key,
     this.country,
@@ -26,6 +29,9 @@ class Item extends StatelessWidget {
     this.iconLeft,
     this.flagPadding,
     this.heightItem,
+    this.radius,
+    this.width,
+    this.height,
   }) : super(key: key);
 
   @override
@@ -42,10 +48,13 @@ class Item extends StatelessWidget {
             if (showFlag!)
               Padding(
                 padding: flagPadding ?? EdgeInsets.zero,
-                child: _Flag(
+                child: Flag(
                   country: country,
                   showFlag: showFlag,
                   useEmoji: useEmoji,
+                  height: height,
+                  width: width,
+                  radius: radius,
                 ),
               ),
             Text(
@@ -59,32 +68,44 @@ class Item extends StatelessWidget {
   }
 }
 
-class _Flag extends StatelessWidget {
+class Flag extends StatelessWidget {
   final Country? country;
   final bool? showFlag;
   final bool? useEmoji;
+  final double? radius;
+  final double? width, height;
 
-  const _Flag({Key? key, this.country, this.showFlag, this.useEmoji})
+  const Flag(
+      {Key? key,
+      this.country,
+      this.showFlag,
+      this.useEmoji,
+      this.radius,
+      this.width,
+      this.height})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return country != null && showFlag!
-        ? Container(
-            child: useEmoji!
-                ? Text(
-                    Utils.generateFlagEmojiUnicode(country?.alpha2Code ?? ''),
-                    style: Theme.of(context).textTheme.headline5,
-                  )
-                : Image.asset(
-                    country!.flagUri,
-                    width: 32.0,
-                    package: 'lenddle',
-                    errorBuilder: (context, error, stackTrace) {
-                      return const SizedBox.shrink();
-                    },
-                  ),
-          )
+        ? useEmoji!
+            ? Text(
+                Utils.generateFlagEmojiUnicode(country?.alpha2Code ?? ''),
+                style: Theme.of(context).textTheme.headlineSmall,
+              )
+            : ClipRRect(
+                borderRadius: BorderRadius.circular(radius ?? 0),
+                child: Image.asset(
+                  country!.flagUri,
+                  width: width ?? 32.0,
+                  height: height,
+                  fit: BoxFit.cover,
+                  package: 'plugin_helper',
+                  errorBuilder: (context, error, stackTrace) {
+                    return const SizedBox.shrink();
+                  },
+                ),
+              )
         : const SizedBox.shrink();
   }
 }

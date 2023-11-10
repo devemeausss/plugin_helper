@@ -4,28 +4,79 @@ enum AlignmentButtonColum { down, up }
 
 enum AlignmentButtonRow { left, right }
 
+/// Display a widget when the user wants to show a popup action in the app.
+///
+/// Example: ask logout, ask confirm,...
 class MyWidgetCustomDialog extends StatefulWidget {
-  final String? title, descriptions;
-  final Function()? onClose;
-  final bool? isShowSecondButton;
+  /// Title of the dialog.
+  final String? title;
+
+  /// Descriptions of the dialog.
+  final String? descriptions;
+
+  /// A callback to be called whenever the user closes the dialog.
+  final VoidCallback? onClose;
+
+  /// This property indicates whether the dialog needs additional action.
+  final bool isShowSecondButton;
+
+  /// The style of the title.
   final TextStyle? textStyleTitle;
+
+  /// The style of the descriptions.
   final TextStyle? texStyleDescription;
+
+  /// Creates a primary button for dialog.
   final Widget buttonPrimary;
+
+  /// Creates a secondary button for dialog.
   final Widget? buttonSecondary;
+
+  /// Background color dialog.
   final Color? backgroundColor;
-  final EdgeInsets? paddingHeader,
-      paddingFooter,
-      paddingCloseIcon,
-      insetPadding;
+
+  /// Set margins for header and footer dialog.
+  final EdgeInsets? paddingHeader, paddingFooter;
+
+  /// Set margins for the close icon.
+  final EdgeInsets? paddingCloseIcon;
+
+  /// The amount of padding added to [MediaQueryData.viewInsets] on the outside of the dialog.
+  /// This defines the minimum space between the screen's edges and the dialog.
+  final EdgeInsets? insetPadding;
+
+  /// Swap buttons with axis X if [isColumn] is false.
   final AlignmentButtonRow alignmentPrimaryRow;
+
+  /// Swap buttons with axis Y if [isColumn] is true.
   final AlignmentButtonColum alignmentPrimaryColumn;
-  final Widget? iconClose, headerCustom;
-  final double? spaceBetweenButton,
-      spaceBetweenTitleAndMessage,
-      spaceBetweenMessageAndButton,
-      shapeRadius,
-      widthContent;
-  final bool? isColumn, isShowCloseIcon;
+
+  /// Creates an icon for the user can close the dialog.
+  final Widget? iconClose;
+
+  /// Add more widget above [title]
+  final Widget? headerCustom;
+
+  /// Space between buttons.
+  final double? spaceBetweenButton;
+
+  /// Space between [title] and [descriptions].
+  final double? spaceBetweenTitleAndMessage;
+
+  /// Space between [descriptions] and `buttons`.
+  final double? spaceBetweenMessageAndButton;
+
+  /// Border radius dialog.
+  final double? shapeRadius;
+
+  /// Width of the dialog.
+  final double? widthContent;
+
+  /// Set axis of buttons.
+  final bool isColumn;
+
+  /// This property indicates whether the close icon is show or not.
+  final bool isShowCloseIcon;
 
   const MyWidgetCustomDialog({
     Key? key,
@@ -69,11 +120,11 @@ class _CustomDialogState extends State<MyWidgetCustomDialog> {
       insetPadding: widget.insetPadding,
       elevation: 0,
       backgroundColor: Colors.transparent,
-      child: contentBox(context),
+      child: _contentBox(context),
     );
   }
 
-  contentBox(context) {
+  _contentBox(context) {
     return Container(
         width: widget.widthContent,
         decoration: BoxDecoration(
@@ -100,7 +151,7 @@ class _CustomDialogState extends State<MyWidgetCustomDialog> {
                             textAlign: TextAlign.center,
                           ),
                         ),
-                      if (widget.title != null || widget.isShowCloseIcon!)
+                      if (widget.title != null || widget.isShowCloseIcon)
                         SizedBox(height: widget.spaceBetweenTitleAndMessage!),
                       if (widget.descriptions != null)
                         Text(
@@ -112,7 +163,7 @@ class _CustomDialogState extends State<MyWidgetCustomDialog> {
                     ],
                   ),
                 ),
-                if (widget.isColumn!)
+                if (widget.isColumn)
                   Padding(
                     padding: widget.paddingFooter ??
                         const EdgeInsets.only(left: 24, right: 24, bottom: 24),
@@ -123,17 +174,17 @@ class _CustomDialogState extends State<MyWidgetCustomDialog> {
                           Column(
                             children: [
                               widget.buttonPrimary,
-                              if (widget.isShowSecondButton!)
+                              if (widget.isShowSecondButton)
                                 SizedBox(height: widget.spaceBetweenButton),
-                              if (widget.isShowSecondButton!)
+                              if (widget.isShowSecondButton)
                                 widget.buttonSecondary!
                             ],
                           )
                         else
                           Column(children: [
-                            if (widget.isShowSecondButton!)
+                            if (widget.isShowSecondButton)
                               widget.buttonSecondary!,
-                            if (widget.isShowSecondButton!)
+                            if (widget.isShowSecondButton)
                               SizedBox(height: widget.spaceBetweenButton),
                             widget.buttonPrimary,
                           ])
@@ -150,9 +201,9 @@ class _CustomDialogState extends State<MyWidgetCustomDialog> {
                           ? Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                if (widget.isShowSecondButton!)
+                                if (widget.isShowSecondButton)
                                   widget.buttonSecondary!,
-                                if (widget.isShowSecondButton!)
+                                if (widget.isShowSecondButton)
                                   SizedBox(width: widget.spaceBetweenButton),
                                 widget.buttonPrimary
                               ],
@@ -161,15 +212,15 @@ class _CustomDialogState extends State<MyWidgetCustomDialog> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 widget.buttonPrimary,
-                                if (widget.isShowSecondButton!)
+                                if (widget.isShowSecondButton)
                                   SizedBox(width: widget.spaceBetweenButton),
-                                if (widget.isShowSecondButton!)
+                                if (widget.isShowSecondButton)
                                   widget.buttonSecondary!,
                               ],
                             ))
               ],
             ),
-            if (widget.isShowCloseIcon!)
+            if (widget.isShowCloseIcon)
               Positioned(
                   right: 0,
                   child: Padding(

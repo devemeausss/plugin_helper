@@ -5,23 +5,67 @@ import 'package:flutter/material.dart';
 import 'package:plugin_helper/plugin_message_require.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
+/// MyWidgetAppListView is the most commonly used scrolling customize widget.
+/// It displays its children one after another in the scroll direction.
 class MyWidgetAppListView<T> extends StatefulWidget {
+  /// Data of the list.
   final List<T> data;
-  final Function()? onLoadMore;
+
+  /// This function [onLoadMore] calls the API to get more data
+  /// when the user scrolls to the end of the list.
+  final VoidCallback? onLoadMore;
+
+  /// Direction of the list.
   final Axis scrollDirection;
+
+  /// The renderItem callback will be called with indices greater than or equal to zero and less than itemCount.
   final Widget Function(int index) renderItem;
+
+  /// This bool will affect whether or not to have the function of drop-down refresh.
   final bool enablePullDown;
+
+  /// This bool will affect whether or not to have the function of scrolling.
   final bool isNeverScroll;
-  final Function()? onRefresh;
+
+  /// Trigger when the user pull to refresh page if [refreshController] not null.
+  final VoidCallback? onRefresh;
+
+  /// A controller control header and footer state, it can trigger driving request Refresh, set the initalRefresh, status if needed.
   final RefreshController? refreshController;
+
+  /// A separation evenly between each item. Default is 24.0
   final double separatorItem;
+
+  /// To add empty space inside the list view.
   final EdgeInsets? padding;
+
+  /// Customize separation evenly between each item.
   final Widget? separatorBuilder;
-  final bool? isLoadingMore, reverse;
+
+  /// Waiting for a response from the server when the user scrolled to the end of the list
+  /// and the application triggered a request function to get more data from the server.
+  final bool isLoadingMore;
+
+  /// Reverse the order of your list before returning the ListView element. Default is false.
+  final bool reverse;
+
+  /// Controls a scrollable widget.
   final ScrollController? scrollController;
+
+  /// Return [ScrollController] when user scrolls the list.
   final Function(ScrollController)? onScrollListener;
+
+  /// Display a widget when waiting for a response from the server.
   final Widget loadingWidget;
-  final double? heightListViewHorizontal, paddingHorizontal;
+
+  /// Set height of the list. Only for horizontal list.
+  final double heightListViewHorizontal;
+
+  /// Set a separation evenly between each item. Only for horizontal list.
+  final double paddingHorizontal;
+
+  /// Customize a header indicator displace before content.
+  final Widget? customHeaderRefresh;
 
   const MyWidgetAppListView({
     Key? key,
@@ -43,27 +87,28 @@ class MyWidgetAppListView<T> extends StatefulWidget {
     this.reverse = false,
     this.onScrollListener,
     required this.loadingWidget,
+    this.customHeaderRefresh,
   }) : super(key: key);
   @override
   AppListViewState createState() => AppListViewState();
 }
 
 class AppListViewState extends State<MyWidgetAppListView> {
-  late ScrollController controller;
+  late ScrollController _controller;
   @override
   void initState() {
     super.initState();
     if (widget.scrollController != null) {
-      controller = widget.scrollController!;
-      controller.addListener(_scrollListener);
+      _controller = widget.scrollController!;
+      _controller.addListener(_scrollListener);
     } else {
-      controller = ScrollController()..addListener(_scrollListener);
+      _controller = ScrollController()..addListener(_scrollListener);
     }
   }
 
   @override
   void dispose() {
-    controller.removeListener(_scrollListener);
+    _controller.removeListener(_scrollListener);
     super.dispose();
   }
 
@@ -75,38 +120,39 @@ class AppListViewState extends State<MyWidgetAppListView> {
           enablePullDown: widget.enablePullDown,
           header: kIsWeb
               ? null
-              : Platform.isIOS
-                  ? const ClassHeaderGridIndicator()
-                  : const MaterialClassicHeader(),
+              : widget.customHeaderRefresh ??
+                  (Platform.isIOS
+                      ? const ClassHeaderGridIndicator()
+                      : const MaterialClassicHeader()),
           onRefresh: () {
             if (widget.onRefresh != null) {
               widget.onRefresh!();
             }
           },
-          child: listView());
+          child: _listView());
     }
-    return switchDirection();
+    return _switchDirection();
   }
 
-  Widget switchDirection() {
+  Widget _switchDirection() {
     if (widget.scrollDirection == Axis.horizontal) {
       return SizedBox(
         height: widget.heightListViewHorizontal,
-        child: listView(),
+        child: _listView(),
       );
     }
-    return listView();
+    return _listView();
   }
 
-  Widget listView() => ListView.separated(
+  Widget _listView() => ListView.separated(
         padding: widget.padding,
         physics: widget.isNeverScroll
             ? const NeverScrollableScrollPhysics()
             : const BouncingScrollPhysics(),
         addAutomaticKeepAlives: true,
         scrollDirection: widget.scrollDirection,
-        controller: controller,
-        reverse: widget.reverse!,
+        controller: _controller,
+        reverse: widget.reverse,
         shrinkWrap: true,
         itemBuilder: (context, index) {
           if (index == widget.data.length) {
@@ -123,7 +169,7 @@ class AppListViewState extends State<MyWidgetAppListView> {
           return widget.renderItem(index);
         },
         itemCount:
-            widget.isLoadingMore! ? widget.data.length + 1 : widget.data.length,
+            widget.isLoadingMore ? widget.data.length + 1 : widget.data.length,
         separatorBuilder: (BuildContext context, int index) {
           if (widget.scrollDirection == Axis.horizontal) {
             return widget.separatorBuilder ??
@@ -140,9 +186,10 @@ class AppListViewState extends State<MyWidgetAppListView> {
 
   void _scrollListener() {
     if (widget.onScrollListener != null) {
-      widget.onScrollListener!(controller);
+      widget.onScrollListener!(_controller);
     }
-    if (widget.onLoadMore != null && controller.position.extentAfter < 200) {
+    if (widget.onLoadMore != null &&
+        _controller.position.pixels > _controller.position.maxScrollExtent) {
       widget.onLoadMore!();
     }
   }

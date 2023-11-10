@@ -12,11 +12,11 @@ class SelectorButton extends StatelessWidget {
   final SelectorConfig selectorConfig;
   final TextStyle? selectorTextStyle;
   final InputDecoration? searchBoxDecoration;
+  final Widget? iconClose;
   final bool autoFocusSearchField;
   final String? locale;
   final bool isEnabled;
   final bool isScrollControlled;
-
   final ValueChanged<Country?> onCountryChanged;
 
   const SelectorButton({
@@ -31,6 +31,7 @@ class SelectorButton extends StatelessWidget {
     required this.onCountryChanged,
     required this.isEnabled,
     required this.isScrollControlled,
+    this.iconClose,
   }) : super(key: key);
 
   @override
@@ -39,8 +40,11 @@ class SelectorButton extends StatelessWidget {
         ? countries.isNotEmpty && countries.length > 1
             ? DropdownButtonHideUnderline(
                 child: DropdownButton<Country>(
-                  key: Key(TestHelper.DropdownButtonKeyValue),
+                  key: const Key(TestHelper.DropdownButtonKeyValue),
                   hint: Item(
+                      height: selectorConfig.height,
+                      width: selectorConfig.width,
+                      radius: selectorConfig.radius,
                       country: country,
                       showFlag: selectorConfig.showFlags,
                       useEmoji: selectorConfig.useEmoji,
@@ -55,6 +59,9 @@ class SelectorButton extends StatelessWidget {
                 ),
               )
             : Item(
+                height: selectorConfig.height,
+                width: selectorConfig.width,
+                radius: selectorConfig.radius,
                 country: country,
                 showFlag: selectorConfig.showFlags,
                 useEmoji: selectorConfig.useEmoji,
@@ -64,7 +71,7 @@ class SelectorButton extends StatelessWidget {
                 textStyle: selectorTextStyle,
                 heightItem: selectorConfig.heightItem)
         : MaterialButton(
-            key: Key(TestHelper.DropdownButtonKeyValue),
+            key: const Key(TestHelper.DropdownButtonKeyValue),
             padding: EdgeInsets.zero,
             minWidth: 0,
             materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -86,6 +93,9 @@ class SelectorButton extends StatelessWidget {
                   }
                 : null,
             child: Item(
+                height: selectorConfig.height,
+                width: selectorConfig.width,
+                radius: selectorConfig.radius,
                 country: country,
                 showFlag: selectorConfig.showFlags,
                 useEmoji: selectorConfig.useEmoji,
@@ -107,6 +117,9 @@ class SelectorButton extends StatelessWidget {
         child: Item(
           key: Key(TestHelper.countryItemKeyValue(country.alpha2Code)),
           country: country,
+          height: selectorConfig.height,
+          width: selectorConfig.width,
+          radius: selectorConfig.radius,
           showFlag: selectorConfig.showFlags,
           useEmoji: selectorConfig.useEmoji,
           textStyle: selectorTextStyle,
@@ -128,7 +141,7 @@ class SelectorButton extends StatelessWidget {
       context: context,
       barrierDismissible: true,
       builder: (BuildContext context) => AlertDialog(
-        content: Container(
+        content: SizedBox(
           width: double.maxFinite,
           child: CountrySearchListWidget(
             countries,
@@ -137,6 +150,7 @@ class SelectorButton extends StatelessWidget {
             showFlags: selectorConfig.showFlags,
             useEmoji: selectorConfig.useEmoji,
             autoFocus: autoFocusSearchField,
+            iconClose: iconClose,
           ),
         ),
       ),
@@ -148,10 +162,11 @@ class SelectorButton extends StatelessWidget {
       BuildContext context, List<Country> countries) {
     return showModalBottomSheet(
       context: context,
+      elevation: 0,
       clipBehavior: Clip.hardEdge,
       isScrollControlled: isScrollControlled,
       backgroundColor: Colors.transparent,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(12), topRight: Radius.circular(12))),
       builder: (BuildContext context) {
@@ -164,7 +179,7 @@ class SelectorButton extends StatelessWidget {
               return Container(
                 decoration: ShapeDecoration(
                   color: Theme.of(context).canvasColor,
-                  shape: RoundedRectangleBorder(
+                  shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(12),
                       topRight: Radius.circular(12),
@@ -179,6 +194,7 @@ class SelectorButton extends StatelessWidget {
                   showFlags: selectorConfig.showFlags,
                   useEmoji: selectorConfig.useEmoji,
                   autoFocus: autoFocusSearchField,
+                  iconClose: iconClose,
                 ),
               );
             },

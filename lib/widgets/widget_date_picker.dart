@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+
+import 'date_time_picker/flutter_datetime_picker.dart';
 
 enum DateType { datePicker, dateTimePicker, timePicker, timePicker24h }
 
+/// Allows users to easily select a day.
 class MyWidgetDatePicker extends StatelessWidget {
   const MyWidgetDatePicker(
       {Key? key,
-      this.date,
       required this.onPress,
       this.initialDate,
       this.lastDate,
@@ -20,17 +21,40 @@ class MyWidgetDatePicker extends StatelessWidget {
       this.locale,
       this.dateType = DateType.datePicker})
       : super(key: key);
-  final String? date;
   final Function(DateTime) onPress;
+
+  /// Display current date on the bottom sheet.
   final DateTime? initialDate;
-  final DateTime? lastDate;
+
+  /// The earliest allowable date on the date range. If [DateType.datePicker] or [DateType.dateTimePicker] is active.
   final DateTime? firstDate;
+
+  /// The latest allowable date on the date range. If [DateType.datePicker] or [DateType.dateTimePicker] is active.
+  final DateTime? lastDate;
+
+  ///
   final Function? onTap;
-  final TextStyle itemStyle, cancelStyle, doneStyle;
+
+  /// The style of the text for each item.
+  final TextStyle itemStyle;
+
+  /// The style of the text in the cancel button.
+  final TextStyle cancelStyle;
+
+  /// The style of the text in the done button.
+  final TextStyle doneStyle;
+
   final Widget child;
-  final DatePickerTheme? theme;
+
+  /// Customize date picker theme.
+  final DatePickerCustomTheme? theme;
+
+  /// User's language and formatting preferences.
   final LocaleType? locale;
+
+  /// The type of the date picker.
   final DateType dateType;
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -94,9 +118,9 @@ class MyWidgetDatePicker extends StatelessWidget {
     onPress(date);
   }
 
-  DatePickerTheme get _theme =>
+  DatePickerCustomTheme get _theme =>
       theme ??
-      DatePickerTheme(
+      DatePickerCustomTheme(
           headerColor: Colors.white,
           backgroundColor: Colors.white,
           itemStyle: itemStyle,

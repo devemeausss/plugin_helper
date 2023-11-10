@@ -1,5 +1,6 @@
-import 'index.dart';
 import 'package:flutter/material.dart';
+
+import 'index.dart';
 
 /// A Scaffold with a configured BottomNavigationBar, separate
 /// Navigators for each tab view and state retaining across tab switches.
@@ -22,6 +23,7 @@ class MyWidgetMaterialBottomNavigationScaffold extends StatefulWidget {
     this.extendBody = false,
     this.showSelectedLabels = true,
     this.showUnselectedLabels = true,
+    this.height,
   }) : super(key: key);
 
   /// List of the tabs to be displayed with their respective navigator's keys.
@@ -44,7 +46,7 @@ class MyWidgetMaterialBottomNavigationScaffold extends StatefulWidget {
   final BoxDecoration? decoration;
   final bool extendBody;
   final bool showSelectedLabels, showUnselectedLabels;
-
+  final double? height;
   @override
   _MaterialBottomNavigationScaffoldState createState() =>
       _MaterialBottomNavigationScaffoldState();
@@ -53,7 +55,7 @@ class MyWidgetMaterialBottomNavigationScaffold extends StatefulWidget {
 class _MaterialBottomNavigationScaffoldState
     extends State<MyWidgetMaterialBottomNavigationScaffold>
     with TickerProviderStateMixin<MyWidgetMaterialBottomNavigationScaffold> {
-  final List<_MaterialBottomNavigationTab> materialNavigationBarItems = [];
+  final List<_MaterialBottomNavigationTab> _materialNavigationBarItems = [];
   final List<AnimationController> _animationControllers = [];
 
   /// Controls which tabs should have its content built. This enables us to
@@ -74,7 +76,7 @@ class _MaterialBottomNavigationScaffoldState
   }
 
   void _initMaterialNavigationBarItems() {
-    materialNavigationBarItems.addAll(
+    _materialNavigationBarItems.addAll(
       widget.navigationBarItems
           .map(
             (barItem) => _MaterialBottomNavigationTab(
@@ -119,11 +121,11 @@ class _MaterialBottomNavigationScaffoldState
         // switches by keeping all of our views in the widget tree.
         body: Stack(
           fit: StackFit.expand,
-          children: materialNavigationBarItems
+          children: _materialNavigationBarItems
               .map(
                 (barItem) => _buildPageFlow(
                   context,
-                  materialNavigationBarItems.indexOf(barItem),
+                  _materialNavigationBarItems.indexOf(barItem),
                   barItem,
                 ),
               )
@@ -132,6 +134,7 @@ class _MaterialBottomNavigationScaffoldState
         bottomNavigationBar: Container(
             padding: widget.padding,
             color: widget.backgroundColor,
+            height: widget.height,
             child: Stack(
               children: [
                 if (widget.customBottomBarBehind != null)
@@ -142,7 +145,7 @@ class _MaterialBottomNavigationScaffoldState
                   backgroundColor: widget.backgroundColor,
                   currentIndex: widget.selectedIndex,
                   elevation: widget.elevation,
-                  items: materialNavigationBarItems
+                  items: _materialNavigationBarItems
                       .map(
                         (item) => item.bottomNavigationBarItem,
                       )

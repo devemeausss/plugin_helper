@@ -12,13 +12,16 @@ class CountrySearchListWidget extends StatefulWidget {
   final bool autoFocus;
   final bool? showFlags;
   final bool? useEmoji;
+  final Widget? iconClose;
 
-  CountrySearchListWidget(this.countries, this.locale,
-      {this.searchBoxDecoration,
+  const CountrySearchListWidget(this.countries, this.locale,
+      {super.key,
+      this.searchBoxDecoration,
       this.scrollController,
       this.showFlags,
       this.useEmoji,
-      this.autoFocus = false});
+      this.autoFocus = false,
+      this.iconClose});
 
   @override
   _CountrySearchListWidgetState createState() =>
@@ -26,7 +29,7 @@ class CountrySearchListWidget extends StatefulWidget {
 }
 
 class _CountrySearchListWidgetState extends State<CountrySearchListWidget> {
-  TextEditingController _searchController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
   late List<Country> filteredCountries;
 
   @override
@@ -44,7 +47,7 @@ class _CountrySearchListWidgetState extends State<CountrySearchListWidget> {
   /// Returns [InputDecoration] of the search box
   InputDecoration getSearchBoxDecoration() {
     return widget.searchBoxDecoration ??
-        InputDecoration(labelText: 'Search by country name or dial code');
+        const InputDecoration(labelText: 'Search by country name or dial code');
   }
 
   /// Filters the list of Country by text from the search box.
@@ -87,10 +90,11 @@ class _CountrySearchListWidgetState extends State<CountrySearchListWidget> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
+        if (widget.iconClose != null) widget.iconClose!,
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
           child: TextFormField(
-            key: Key(TestHelper.CountrySearchInputKeyValue),
+            key: const Key(TestHelper.CountrySearchInputKeyValue),
             decoration: getSearchBoxDecoration(),
             controller: _searchController,
             autofocus: widget.autoFocus,
@@ -117,7 +121,7 @@ class _CountrySearchListWidgetState extends State<CountrySearchListWidget> {
                         textAlign: TextAlign.start)),
                 subtitle: Align(
                     alignment: AlignmentDirectional.centerStart,
-                    child: Text('${country.dialCode ?? ''}',
+                    child: Text(country.dialCode ?? '',
                         textDirection: TextDirection.ltr,
                         textAlign: TextAlign.start)),
                 onTap: () => Navigator.of(context).pop(country),
@@ -150,7 +154,7 @@ class _Flag extends StatelessWidget {
             child: useEmoji!
                 ? Text(
                     Utils.generateFlagEmojiUnicode(country?.alpha2Code ?? ''),
-                    style: Theme.of(context).textTheme.headline5,
+                    style: Theme.of(context).textTheme.headlineSmall,
                   )
                 : country?.flagUri != null
                     ? CircleAvatar(
@@ -159,8 +163,8 @@ class _Flag extends StatelessWidget {
                           package: 'plugin_helper',
                         ),
                       )
-                    : SizedBox.shrink(),
+                    : const SizedBox.shrink(),
           )
-        : SizedBox.shrink();
+        : const SizedBox.shrink();
   }
 }

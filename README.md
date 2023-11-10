@@ -1,19 +1,26 @@
 # plugin_helper
-A plugin for boilerplate mobile
+A plugin supports for boilerplate mobile (Flutter). Only use, do not edit.
 
-## Configuration
-In pubspec.yaml
+## SDK
+ - Flutter
+ - Version: 3.13.2 or newer
+ 
+## Getting started
+This will add a line like this to your package's pubspec.yaml (and run an implicit flutter pub get):
 ```
-plugin_helper: ^0.0.1
+dependencies:
+  plugin_helper:
+    git:
+      url: https://github.com/tharro/plugin_helper
+      ref: ref_id
 ```
 
-## Usage
-Syntax for Plugin:
-```
-MyPlugin..
-```
+## Usages
 
-Syntax for Widget:
+### Syntax
+To use widget or plugin 
 ```
+MyPlugin...
+
 MyWidget...
 ```

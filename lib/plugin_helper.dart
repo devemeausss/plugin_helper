@@ -2,17 +2,17 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
-import 'dart:ui' as ui;
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:http/http.dart' as http;
+import 'package:path/path.dart' as path;
 import 'package:plugin_helper/widgets/phone_number/src/models/country_list.dart';
 import 'package:plugin_helper/widgets/phone_number/src/utils/phone_number/phone_number_util.dart';
-import './index.dart';
-import 'package:path/path.dart' as path;
-import 'package:http/http.dart' as http;
 
-DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
+import './index.dart';
+
 var dio = Dio();
 
 enum PasswordValidType {
@@ -38,8 +38,6 @@ enum RegExpType {
 }
 
 class MyPluginHelper {
-  static const MethodChannel _channel = MethodChannel('plugin_helper');
-
   static bool isValidateEmail({required String email}) {
     String p =
         r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
@@ -47,6 +45,7 @@ class MyPluginHelper {
     return regExp.hasMatch(email.trim());
   }
 
+  /// Retrieve the phone number by country
   static String parsePhoneWithCountry({required String phone}) {
     final List<Locale> systemLocales = WidgetsBinding.instance.window.locales;
     String? isoCountryCode = systemLocales.first.countryCode;
@@ -66,22 +65,6 @@ class MyPluginHelper {
       }
     }
     return phone;
-  }
-
-  static Future<String> getMeIdDevice() async {
-    String meId = '';
-    try {
-      if (Platform.isAndroid) {
-        AndroidDeviceInfo? androidDevice = await deviceInfoPlugin.androidInfo;
-        meId = androidDevice.id;
-      } else if (Platform.isIOS) {
-        IosDeviceInfo iosDevice = await deviceInfoPlugin.iosInfo;
-        meId = iosDevice.identifierForVendor!;
-      }
-    } on PlatformException {
-      print('Error:' 'Failed to get platform version.');
-    }
-    return meId;
   }
 
   static bool isValidPassword(
@@ -118,14 +101,27 @@ class MyPluginHelper {
     return null;
   }
 
+  /// Format currency by locale
   static String formatCurrency(
-      {String locale = 'en-US', required double number}) {
+      {String locale = 'en-US',
+      required double number,
+      bool isAlwayShowDecimal = false}) {
     NumberFormat formatCurrency =
         NumberFormat.currency(locale: locale, symbol: '\$');
     try {
-      return formatCurrency.format(number);
+      String currency = formatCurrency.format(number);
+      if (isAlwayShowDecimal) {
+        return currency;
+      }
+
+      List<String> arr = currency.split('.');
+      if (int.parse(arr.last) != 0) {
+        return currency;
+      }
+
+      return arr.first;
     } catch (e) {
-      return '\$0.00';
+      return '\$0${isAlwayShowDecimal ? '.00' : ''}';
     }
   }
 
@@ -145,7 +141,7 @@ class MyPluginHelper {
     firstName = fullNames.first.toString();
     if (fullNames.length > 1) {
       fullNames.removeAt(0);
-      lastName = fullNames.reduce((a, b) => a + " " + b);
+      lastName = fullNames.reduce((a, b) => "$a $b");
     }
     return FullName(firstName: firstName, lastName: lastName);
   }
@@ -192,7 +188,7 @@ class MyPluginHelper {
           String time = DateTime.now().microsecondsSinceEpoch.toString();
           String name = time + links[i].split('/').last;
           saveFileDir = path.join(dir!.path, name);
-          await dio.download(links[i] + '?$time', saveFileDir);
+          await dio.download('${links[i]}?$time', saveFileDir);
         }
         onSuccess();
         return saveFileDir;
@@ -222,6 +218,7 @@ class MyPluginHelper {
     }
   }
 
+  /// Format utc time from the server to local time
   static String formatUtcTime(
       {required String dateUtc,
       String? format = 'dd/MM/yyyy HH:mm:ss',
@@ -229,7 +226,7 @@ class MyPluginHelper {
     try {
       String date = dateUtc;
       if (!date.contains("Z")) {
-        date = date + "Z";
+        date = "${date}Z";
       }
       var dateLocal = DateTime.parse(date).toLocal();
       return DateFormat(format, languageCode).format(dateLocal);
@@ -238,6 +235,7 @@ class MyPluginHelper {
     }
   }
 
+  /// Format local time to utc time
   static String convertLocalTimeToUtcTime({String? dateTime}) {
     try {
       if (dateTime != null) {
@@ -251,10 +249,21 @@ class MyPluginHelper {
     }
   }
 
+  /// Calculate the time between today's time and the set time.
+  ///
+  /// Example
+  /// ```
+  /// DateTime now = DateTime.now(); // ~> 2023-09-09 07:00:00
+  /// String dateTime = '2023-09-09 09:00:00'
+  /// Strong formatTime = MyPluginHelper.convertTimeToHourOrDay(dateTime);
+  /// ```
+  /// Output: 2 hours
   static String convertTimeToHourOrDay(
-      {required String dateTime, String? format = 'dd/MM/yyyy HH:mm:ss'}) {
+      {required String dateTime,
+      String? format = 'dd/MM/yyyy HH:mm:ss',
+      String languageCode = 'en'}) {
     try {
-      var date = DateFormat(format).parse(dateTime);
+      var date = DateFormat(format, languageCode).parse(dateTime);
       final dateNow = DateTime.now();
       final day = dateNow.difference(date).inDays.abs();
       if (day == 0) {
@@ -272,7 +281,7 @@ class MyPluginHelper {
         }
       }
       if (day > 7) {
-        return DateFormat(format).format(date);
+        return DateFormat(format, languageCode).format(date);
       }
       return "$day ${MyPluginMessageRequire.day}${day > 1 ? 's' : ''}";
     } catch (e) {
@@ -280,12 +289,13 @@ class MyPluginHelper {
     }
   }
 
+  /// Check version to redirect app updates
   static checkUpdateApp(
       {required String iOSId,
       required String androidId,
       String? iOSAppStoreCountry,
       required Function(VersionStatus) onUpdate,
-      required Function() onError}) async {
+      required VoidCallback onError}) async {
     final newVersion = NewVersionPlus(
         androidId: androidId,
         iOSId: iOSId,
@@ -298,32 +308,34 @@ class MyPluginHelper {
     }
   }
 
-  static bool isTablet(BuildContext context) {
-    final double devicePixelRatio = ui.window.devicePixelRatio;
-    final ui.Size size = ui.window.physicalSize;
-    final double width = size.width;
-    final double height = size.height;
-
-    if (devicePixelRatio < 2 && (width >= 1000 || height >= 1000)) {
-      return true;
-    } else if (devicePixelRatio == 2 && (width >= 1920 || height >= 1920)) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
+  /// Set default languages.
+  /// Use when the project has multiple languages.
   static Future setLanguage({required String language}) async {
+    if (!kIsWeb && Platform.isLinux) {
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setString(MyPluginAppConstraints.language, language);
+      return;
+    }
+
     const storage = FlutterSecureStorage();
     await storage.write(key: MyPluginAppConstraints.language, value: language);
   }
 
+  /// Get default languages.
+  /// Use when the project has multiple languages.
   static Future<String> getLanguage() async {
+    if (!kIsWeb && Platform.isLinux) {
+      final prefs = await SharedPreferences.getInstance();
+      String? language = prefs.getString(MyPluginAppConstraints.language);
+      return language ?? 'en';
+    }
+
     const storage = FlutterSecureStorage();
     String? language = await storage.read(key: MyPluginAppConstraints.language);
     return language ?? 'en';
   }
 
+  /// Check if application is on its first run
   static Future<bool> isFirstInstall() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getBool(MyPluginAppConstraints.firstRun) ?? true;
@@ -334,6 +346,7 @@ class MyPluginHelper {
     await prefs.setBool(MyPluginAppConstraints.firstRun, false);
   }
 
+  /// Shows a modal Material Design bottom sheet.
   static Future<T> showModalBottom<T>({
     required BuildContext context,
     double radiusShape = 16,
@@ -342,12 +355,15 @@ class MyPluginHelper {
     Color? backgroundColor,
     required Widget child,
     double? maxHeight,
+    double? width,
+    EdgeInsets? padding,
   }) async {
     return await showModalBottomSheet(
         context: context,
         isScrollControlled: true,
         isDismissible: isDismissible,
         backgroundColor: backgroundColor,
+        elevation: 0,
         constraints: BoxConstraints(
             maxHeight: MediaQuery.of(context).size.height * 0.98),
         shape: shape ??
@@ -355,9 +371,9 @@ class MyPluginHelper {
                 borderRadius:
                     BorderRadius.vertical(top: Radius.circular(radiusShape))),
         builder: (context) => Padding(
-            padding: MediaQuery.of(context).viewInsets,
+            padding: padding ?? MediaQuery.of(context).viewInsets,
             child: Container(
-              width: MediaQuery.of(context).size.width,
+              width: width ?? MediaQuery.of(context).size.width,
               constraints: BoxConstraints(
                   maxHeight:
                       maxHeight ?? MediaQuery.of(context).size.height * 0.8),
@@ -365,6 +381,7 @@ class MyPluginHelper {
             )));
   }
 
+  /// Specifies the set of orientations the application interface can be displayed in.
   static setOrientation({bool isPortrait = true}) {
     if (!isPortrait) {
       SystemChrome.setPreferredOrientations([
@@ -379,6 +396,9 @@ class MyPluginHelper {
     }
   }
 
+  // ======================================================================================
+  // ================================== CREDIT CARD =======================================
+  // ======================================================================================
   /// Credit Card prefix patterns as of March 2019
   /// A [List<String>] represents a range.
   /// i.e. ['51', '55'] represents the range of cards starting with '51' to those starting with '55'
@@ -457,19 +477,24 @@ class MyPluginHelper {
     return cardType;
   }
 
+  // ========================================================================================
+  // ================================== PREVENTS APP ========================================
+  // ========================================================================================
+  /// Prevents app from closing splash screen, app layout will be build but not displayed
   static WidgetsBinding? _widgetsBinding;
-  // Prevents app from closing splash screen, app layout will be build but not displayed
   static void preserve({required WidgetsBinding widgetsBinding}) {
     _widgetsBinding = widgetsBinding;
     _widgetsBinding?.deferFirstFrame();
   }
 
+  /// Stop prevents app
   static Future<void> remove() async {
     await Future.delayed(const Duration(seconds: 1));
     _widgetsBinding?.allowFirstFrame();
     _widgetsBinding = null;
   }
 
+  /// Get link image from the cloudfront server
   static String getLinkImage(
       {required String key,
       double? width,
@@ -495,6 +520,7 @@ class MyPluginHelper {
     return MyPluginAppEnvironment().linkCloudfront! + encoded;
   }
 
+  /// Set the TextField only allows characters matching a pattern.
   static List<TextInputFormatter> checkRegExt({required RegExpType type}) {
     switch (type) {
       case RegExpType.numberWithDecimal:
@@ -516,10 +542,7 @@ class MyPluginHelper {
     }
   }
 
-  static Future<String?> getTimeZone() async {
-    return await _channel.invokeMethod('getLocalTimezone');
-  }
-
+  /// Convert url to file.
   static Future<File> urlToFile(String imageUrl) async {
     // generate random number.
     var rng = Random();
@@ -528,7 +551,7 @@ class MyPluginHelper {
     // get temporary path from temporary directory.
     String tempPath = tempDir.path;
     // create a new file in temporary path with random file name.
-    File file = File(tempPath + (rng.nextInt(100)).toString() + '.png');
+    File file = File('$tempPath${rng.nextInt(100)}.png');
     // call http.get method and pass imageUrl into it to get response.
     http.Response response = await http.get(Uri.parse(imageUrl));
     // write bodyBytes received in response to file.

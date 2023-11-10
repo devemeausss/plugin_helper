@@ -1,4 +1,4 @@
-//This plugin had used in multiple languages
+/// Multiple languages
 class MyPluginMessageRequire {
   static String noConnection = 'No internet connection';
   static String canNotLaunchURL = 'Can not launch URL';
@@ -42,12 +42,12 @@ class MyPluginMessageRequire {
     String? messageLinkEmpty,
     String? messageRequiredFullName,
     String? messageInvalidCvv,
-    messageInvalidExpired,
-    messageInvalidCardNumber,
-    messageHour,
-    messageDay,
-    messageMinute,
-    messageSecond,
+    String? messageInvalidExpired,
+    String? messageInvalidCardNumber,
+    String? messageHour,
+    String? messageDay,
+    String? messageMinute,
+    String? messageSecond,
   }) {
     noConnection = messageNoConnection;
     canNotLaunchURL = messageCanNotLaunchURL;
