@@ -9,7 +9,7 @@ A plugin supports for boilerplate mobile (Flutter). Only use, do not edit.
  
 ## Getting started
 This will add a line like this to your package's pubspec.yaml (and run an implicit flutter pub get):
-```
+```yaml
 dependencies:
   plugin_helper:
     git:
@@ -21,7 +21,7 @@ dependencies:
 
 ### Syntax
 To use widget or plugin 
-```
+```dart
 MyPlugin...
 
 MyWidget...
