@@ -15,6 +15,7 @@ class MyPluginAppConstraints {
   static const String expired = 'EXPIRED';
   static const String expiredRefresh = 'EXPIRED_REFRESH';
   static const String language = 'LANGUAGE';
+  static const String fcmToken = 'FCM_TOKEN';
 }
 
 /// This plugin helps manage user access tokens.
@@ -158,6 +159,21 @@ class MyPluginAuthentication {
     await prefs.remove(MyPluginAppConstraints.refreshToken);
     await prefs.remove(MyPluginAppConstraints.expired);
     await prefs.remove(MyPluginAppConstraints.expiredRefresh);
+  }
+
+  static Future<String?> getCurrentFCMToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(MyPluginAppConstraints.fcmToken);
+  }
+
+  static Future<void> saveFCMToken(String fcmToken) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(MyPluginAppConstraints.fcmToken, fcmToken);
+  }
+
+  static Future<void> removeFCMToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(MyPluginAppConstraints.fcmToken);
   }
 }
 
