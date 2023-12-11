@@ -185,6 +185,9 @@ class MyWidgetTextField extends StatefulWidget {
   /// Customize a decoration for the text field.
   final Decoration? boxDecorationTextField;
 
+  /// Manage magnifier;
+  final TextMagnifierConfiguration? magnifierConfiguration;
+
   const MyWidgetTextField({
     Key? key,
     this.prefixIcon,
@@ -246,6 +249,7 @@ class MyWidgetTextField extends StatefulWidget {
     this.keyboardAppearance,
     this.prefixIconLabel,
     this.boxDecorationTextField,
+    this.magnifierConfiguration,
   }) : super(key: key);
 
   @override
@@ -485,6 +489,7 @@ class _WidgetTextFieldState extends State<MyWidgetTextField> {
         Container(
           decoration: widget.boxDecorationTextField,
           child: TextFormField(
+            magnifierConfiguration: widget.magnifierConfiguration,
             autofocus: widget.autoFocus,
             textInputAction: widget.textInputAction,
             onFieldSubmitted: widget.onFieldSubmitted,
