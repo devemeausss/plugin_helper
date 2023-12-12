@@ -188,6 +188,9 @@ class MyWidgetTextField extends StatefulWidget {
   /// Manage magnifier;
   final TextMagnifierConfiguration? magnifierConfiguration;
 
+  /// Expands text field
+  final bool expands;
+
   const MyWidgetTextField({
     Key? key,
     this.prefixIcon,
@@ -208,7 +211,7 @@ class MyWidgetTextField extends StatefulWidget {
     this.textError,
     this.onTap,
     this.contentPadding,
-    this.maxLines = 1,
+    this.maxLines,
     this.minLines,
     required this.focus,
     this.onFieldSubmitted,
@@ -250,6 +253,7 @@ class MyWidgetTextField extends StatefulWidget {
     this.prefixIconLabel,
     this.boxDecorationTextField,
     this.magnifierConfiguration,
+    this.expands = false,
   }) : super(key: key);
 
   @override
@@ -506,8 +510,9 @@ class _WidgetTextFieldState extends State<MyWidgetTextField> {
             style: widget.textStyle,
             scrollPadding: EdgeInsets.zero,
             maxLength: widget.maxLength,
-            maxLines: widget.maxLines ?? 1,
+            maxLines: widget.maxLines,
             minLines: widget.minLines,
+            expands: widget.expands,
             textAlignVertical: TextAlignVertical.center,
             keyboardAppearance: widget.keyboardAppearance,
             decoration: InputDecoration(
