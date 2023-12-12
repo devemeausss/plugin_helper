@@ -191,6 +191,9 @@ class MyWidgetTextField extends StatefulWidget {
   /// Expands text field
   final bool expands;
 
+  /// Check spell
+  final SpellCheckConfiguration? spellCheckConfiguration;
+
   const MyWidgetTextField({
     Key? key,
     this.prefixIcon,
@@ -254,6 +257,7 @@ class MyWidgetTextField extends StatefulWidget {
     this.boxDecorationTextField,
     this.magnifierConfiguration,
     this.expands = false,
+    this.spellCheckConfiguration,
   }) : super(key: key);
 
   @override
@@ -515,6 +519,7 @@ class _WidgetTextFieldState extends State<MyWidgetTextField> {
             expands: widget.expands,
             textAlignVertical: TextAlignVertical.center,
             keyboardAppearance: widget.keyboardAppearance,
+            spellCheckConfiguration: widget.spellCheckConfiguration,
             decoration: InputDecoration(
               isDense: true,
               constraints: widget.constraints,
