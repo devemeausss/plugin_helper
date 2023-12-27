@@ -145,13 +145,19 @@ class _MyWidgetPhotoViewCustomState extends State<MyWidgetPhotoViewCustom> {
           index: index);
     }
 
-    bool isFromUrl = widget.images[index].url!.contains('http') ||
-        widget.images[index].url!.contains('https');
+    bool isFromUrl = (widget.images[index].url ?? '').contains('http') ||
+        (widget.images[index].url ?? '').contains('https');
 
     if (!kIsWeb) {
-      if ((Platform.isMacOS || Platform.isWindows || Platform.isLinux) &&
-          !isFromUrl) {
-        return _customChild(Image.file(File(widget.images[index].url!)),
+      bool isFileFromDesktop =
+          (Platform.isMacOS || Platform.isWindows || Platform.isLinux) &&
+              !isFromUrl;
+      bool imageFile = widget.images[index].file != null;
+      if (imageFile || isFileFromDesktop) {
+        return _customChild(
+            Image.file(imageFile
+                ? widget.images[index].file!
+                : File(widget.images[index].url!)),
             index: index);
       }
     }
