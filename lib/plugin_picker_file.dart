@@ -15,14 +15,13 @@ class MyPluginPickerFile {
     return null;
   }
 
-  static Future<XFile?>? uploadSingleVideo(
+  static Future<XFile?>? recordVideo(
       {required BuildContext context,
-      required bool isCamera,
+      CameraDevice cameraDevice = CameraDevice.front,
       required Function(String code) onError}) async {
     try {
       final videoFile = await ImagePicker().pickVideo(
-          source: isCamera ? ImageSource.camera : ImageSource.gallery,
-          preferredCameraDevice: CameraDevice.front);
+          source: ImageSource.camera, preferredCameraDevice: cameraDevice);
       return videoFile;
     } catch (error) {
       if (error is PlatformException) {
@@ -32,6 +31,52 @@ class MyPluginPickerFile {
       }
     }
     return null;
+  }
+
+  static Future<XFile?>? pickSingleMedia(
+      {required BuildContext context,
+      double? maxWidth,
+      double? maxHeight,
+      int? imageQuality,
+      required Function(String code) onError}) async {
+    try {
+      final videoFile = await ImagePicker().pickMedia(
+        imageQuality: imageQuality,
+        maxHeight: maxHeight,
+        maxWidth: maxWidth,
+      );
+      return videoFile;
+    } catch (error) {
+      if (error is PlatformException) {
+        onError(error.code);
+      } else {
+        onError('-1');
+      }
+    }
+    return null;
+  }
+
+  static Future<List<XFile>> pickMultipleMedia(
+      {required BuildContext context,
+      double? maxWidth,
+      double? maxHeight,
+      int? imageQuality,
+      required Function(String code) onError}) async {
+    try {
+      final videoFile = await ImagePicker().pickMultipleMedia(
+        imageQuality: imageQuality,
+        maxHeight: maxHeight,
+        maxWidth: maxWidth,
+      );
+      return videoFile;
+    } catch (error) {
+      if (error is PlatformException) {
+        onError(error.code);
+      } else {
+        onError('-1');
+      }
+    }
+    return [];
   }
 
   static Future<XFile?>? uploadSingleImage({
