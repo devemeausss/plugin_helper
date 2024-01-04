@@ -71,9 +71,6 @@ class MyWidgetButtonCustom extends StatelessWidget {
   /// The width and height button
   final double? width, height;
 
-  /// The elevation controls the shadow effect displayed below the button.
-  final double? elevation;
-
   /// A widget display on the left [title]
   final Widget? icon;
 
@@ -83,8 +80,8 @@ class MyWidgetButtonCustom extends StatelessWidget {
   /// Change [title] to another widget.
   final Widget? customTitle;
 
-  /// Shadow color of the button.
-  final Color? shadowColor;
+  /// A list of shadows
+  final List<BoxShadow>? boxShadows;
 
   const MyWidgetButtonCustom({
     Key? key,
@@ -110,14 +107,13 @@ class MyWidgetButtonCustom extends StatelessWidget {
     this.outLineBorderColor = Colors.white,
     this.width,
     this.height,
-    this.elevation,
     this.icon,
     this.gradient,
     this.disableBackgroundColor = const Color(0xfff1f1f2),
     this.disableTextColor = const Color(0xff9a9a9a),
     this.disableBorderColor = const Color(0xfff1f1f2),
     this.customTitle,
-    this.shadowColor,
+    this.boxShadows,
   }) : super(key: key);
 
   @override
@@ -127,6 +123,7 @@ class MyWidgetButtonCustom extends StatelessWidget {
       height: height ?? 50,
       decoration: BoxDecoration(
           gradient: gradient,
+          boxShadow: boxShadows,
           borderRadius: BorderRadius.circular(borderRadius)),
       child: ElevatedButton(
         onPressed: enabled
@@ -138,9 +135,7 @@ class MyWidgetButtonCustom extends StatelessWidget {
           foregroundColor: _checkBackgroundColor() == Colors.white
               ? Colors.grey
               : const Color.fromRGBO(255, 255, 255, 1),
-          elevation: elevation,
           padding: padding,
-          shadowColor: shadowColor,
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(borderRadius)),
           backgroundColor: enabled == false
