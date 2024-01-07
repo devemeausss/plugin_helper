@@ -136,6 +136,7 @@ class MyWidgetButtonCustom extends StatelessWidget {
               ? Colors.grey
               : const Color.fromRGBO(255, 255, 255, 1),
           padding: padding,
+          elevation: 0,
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(borderRadius)),
           backgroundColor: enabled == false
