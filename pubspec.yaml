@@ -23,7 +23,8 @@ dependencies:
   new_version_plus: ^0.0.10
   cached_network_image: ^3.3.1
   pull_to_refresh: ^2.0.0
-  pin_code_fields: ^7.4.0
+  pin_code_fields: 
+    path: custom_packages/pin_code_fields
   mime_type: ^1.0.0
   meta: ^1.8.0
   libphonenumber: ^2.0.2

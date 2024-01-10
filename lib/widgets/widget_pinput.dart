@@ -72,6 +72,15 @@ class MyWidgetPinPut extends StatelessWidget {
   /// If the pin code field should be autofocused or not. Default is [false]
   final bool autoFocus;
 
+  /// Colors of the text which have inputs. Default is [Colors.black]
+  final Color? textActiveColor;
+
+  /// Colors of the text which don't have inputs. Default is [Colors.black]
+  final Color? textInactiveColor;
+
+  /// Colors of the text which is currently selected.. Default is [Colors.black]
+  final Color? textSelectedColor;
+
   const MyWidgetPinPut(
       {Key? key,
       this.onCompleted,
@@ -95,7 +104,10 @@ class MyWidgetPinPut extends StatelessWidget {
       this.heightPinput,
       required this.textStyle,
       this.autoFocus = false,
-      this.length})
+      this.length,
+      required this.textActiveColor,
+      required this.textInactiveColor,
+      required this.textSelectedColor})
       : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -125,6 +137,9 @@ class MyWidgetPinPut extends StatelessWidget {
         selectedFillColor: selectedFillColor ?? Colors.white,
         selectedColor: selectedColor ?? const Color(0xffffb41d),
         borderWidth: borderWidth ?? 1,
+        textActiveColor: textActiveColor ?? Colors.black,
+        textInactiveColor: textInactiveColor ?? Colors.black,
+        textSelectedColor: textSelectedColor ?? Colors.black,
       ),
       textStyle: textStyle,
       cursorColor: Colors.black,
