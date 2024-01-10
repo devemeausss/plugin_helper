@@ -24,7 +24,9 @@ dependencies:
   cached_network_image: ^3.3.1
   pull_to_refresh: ^2.0.0
   pin_code_fields: 
-    path: custom_packages/pin_code_fields
+    git:
+      url: https://github.com/devemeausss/pin_code_fields
+      ref: 899023d4b808aec7492538d92f3c62f9d3cae2ea
   mime_type: ^1.0.0
   meta: ^1.8.0
   libphonenumber: ^2.0.2
