@@ -105,9 +105,9 @@ class MyWidgetPinPut extends StatelessWidget {
       required this.textStyle,
       this.autoFocus = false,
       this.length,
-      required this.textActiveColor,
-      required this.textInactiveColor,
-      required this.textSelectedColor})
+      this.textActiveColor,
+      this.textInactiveColor,
+      this.textSelectedColor})
       : super(key: key);
   @override
   Widget build(BuildContext context) {
