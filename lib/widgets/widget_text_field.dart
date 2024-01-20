@@ -194,6 +194,9 @@ class MyWidgetTextField extends StatefulWidget {
   /// Check spell
   final SpellCheckConfiguration? spellCheckConfiguration;
 
+  /// Defines how the floating label should behave.
+  final FloatingLabelBehavior? floatingLabelBehavior;
+
   const MyWidgetTextField({
     Key? key,
     this.prefixIcon,
@@ -258,6 +261,7 @@ class MyWidgetTextField extends StatefulWidget {
     this.magnifierConfiguration,
     this.expands = false,
     this.spellCheckConfiguration,
+    this.floatingLabelBehavior,
   }) : super(key: key);
 
   @override
@@ -522,6 +526,7 @@ class _WidgetTextFieldState extends State<MyWidgetTextField> {
             spellCheckConfiguration: widget.spellCheckConfiguration,
             decoration: InputDecoration(
               isDense: true,
+              floatingLabelBehavior: widget.floatingLabelBehavior,
               constraints: widget.constraints,
               hintText: widget.hintText,
               hintStyle: widget.textStyleHint,
