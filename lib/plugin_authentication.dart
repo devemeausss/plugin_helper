@@ -16,6 +16,7 @@ class MyPluginAppConstraints {
   static const String expiredRefresh = 'EXPIRED_REFRESH';
   static const String language = 'LANGUAGE';
   static const String fcmToken = 'FCM_TOKEN';
+  static const String imei = 'IMEI';
 }
 
 /// This plugin helps manage user access tokens.
@@ -174,6 +175,18 @@ class MyPluginAuthentication {
   static Future<void> removeFCMToken() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(MyPluginAppConstraints.fcmToken);
+  }
+
+  static Future<String?> getCurrentIMEI() async {
+    return storage.read(key: MyPluginAppConstraints.imei);
+  }
+
+  static Future<void> saveIMEI(String imei) async {
+    await storage.write(key: MyPluginAppConstraints.imei, value: imei);
+  }
+
+  static Future<void> removeIMEI() async {
+    await storage.delete(key: MyPluginAppConstraints.imei);
   }
 }
 
