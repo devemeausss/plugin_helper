@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
 /// A widget which will help you to generate pin code fields.
@@ -81,6 +82,9 @@ class MyWidgetPinPut extends StatelessWidget {
   /// Colors of the text which is currently selected.. Default is [Colors.black]
   final Color? textSelectedColor;
 
+  ///A list of [TextInputFormatter] that goes to the TextField
+  final List<TextInputFormatter> inputFormatters;
+
   const MyWidgetPinPut(
       {Key? key,
       this.onCompleted,
@@ -107,7 +111,8 @@ class MyWidgetPinPut extends StatelessWidget {
       this.length,
       this.textActiveColor,
       this.textInactiveColor,
-      this.textSelectedColor})
+      this.textSelectedColor,
+      this.inputFormatters = const <TextInputFormatter>[]})
       : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -141,6 +146,7 @@ class MyWidgetPinPut extends StatelessWidget {
         textInactiveColor: textInactiveColor ?? Colors.black,
         textSelectedColor: textSelectedColor ?? Colors.black,
       ),
+      inputFormatters: inputFormatters,
       textStyle: textStyle,
       cursorColor: Colors.black,
       animationDuration: const Duration(milliseconds: 300),
