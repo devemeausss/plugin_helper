@@ -105,11 +105,17 @@ class MyPluginHelper {
   static String formatCurrency(
       {String locale = 'en-US',
       required double number,
-      bool isAlwayShowDecimal = false}) {
+      bool isAlwayShowDecimal = false,
+      bool isRoundDouble = true,
+      int places = 2}) {
+    double num = number;
+    if (isRoundDouble) {
+      num = roundDoubleToNDecimals(num, places);
+    }
     NumberFormat formatCurrency =
         NumberFormat.currency(locale: locale, symbol: '\$');
     try {
-      String currency = formatCurrency.format(number);
+      String currency = formatCurrency.format(num);
       if (isAlwayShowDecimal) {
         return currency;
       }
@@ -123,6 +129,11 @@ class MyPluginHelper {
     } catch (e) {
       return '\$0${isAlwayShowDecimal ? '.00' : ''}';
     }
+  }
+
+  static double roundDoubleToNDecimals(double value, int places) {
+    double mod = pow(10.0, places).toDouble();
+    return ((value * mod).round().toDouble() / mod);
   }
 
   static bool isValidFullName({required String text}) {
