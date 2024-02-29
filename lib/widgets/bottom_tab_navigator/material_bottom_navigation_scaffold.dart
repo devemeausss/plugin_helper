@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
 import 'index.dart';
@@ -61,9 +62,16 @@ class _MaterialBottomNavigationScaffoldState
   /// Controls which tabs should have its content built. This enables us to
   /// lazy instantiate it.
   final List<bool> _shouldBuildTab = <bool>[];
+  List<MyWidgetBottomNavigationTab> _navigationBarItems = [];
 
   @override
   void initState() {
+    _navigationBarItems = widget.navigationBarItems;
+    _onLoadData();
+    super.initState();
+  }
+
+  _onLoadData() {
     _initAnimationControllers();
     _initMaterialNavigationBarItems();
 
@@ -71,8 +79,6 @@ class _MaterialBottomNavigationScaffoldState
       widget.navigationBarItems.length,
       false,
     ));
-
-    super.initState();
   }
 
   void _initMaterialNavigationBarItems() {
@@ -112,6 +118,23 @@ class _MaterialBottomNavigationScaffoldState
     }
 
     super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(
+      covariant MyWidgetMaterialBottomNavigationScaffold oldWidget) {
+    if (!const IterableEquality()
+        .equals(_navigationBarItems, widget.navigationBarItems)) {
+      _navigationBarItems = widget.navigationBarItems;
+      _materialNavigationBarItems.clear();
+      _animationControllers.clear();
+
+      /// Controls which tabs should have its content built. This enables us to
+      /// lazy instantiate it.
+      _shouldBuildTab.clear();
+      _onLoadData();
+    }
+    super.didUpdateWidget(oldWidget);
   }
 
   @override
