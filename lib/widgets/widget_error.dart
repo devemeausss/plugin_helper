@@ -6,6 +6,12 @@ import 'package:plugin_helper/index.dart';
 
 /// Show error message inline
 class MyWidgetError extends StatelessWidget {
+  // How the children should be placed along the main axis in a flex layout.
+  final MainAxisAlignment mainAxisAlignment;
+
+  /// How the children should be placed along the cross axis in a flex layout.
+  final CrossAxisAlignment crossAxisAlignment;
+
   /// Error message to show.
   final String error;
 
@@ -29,6 +35,8 @@ class MyWidgetError extends StatelessWidget {
 
   const MyWidgetError({
     Key? key,
+    this.crossAxisAlignment = CrossAxisAlignment.center,
+    this.mainAxisAlignment = MainAxisAlignment.center,
     required this.error,
     required this.textStyle,
     this.onRefresh,
@@ -41,7 +49,8 @@ class MyWidgetError extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var child = Column(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: mainAxisAlignment,
+      crossAxisAlignment: crossAxisAlignment,
       children: [
         iconError ?? const Icon(Icons.error_outline, size: 20),
         5.h,
