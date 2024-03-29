@@ -100,8 +100,8 @@ class AdaptiveBottomNavigationScaffoldState
       if (_currentlySelectedIndex == newIndex) {
         // If the user is re-selecting the tab, the common
         // behavior is to empty the stack.
-        widget.navigationBarItems[newIndex].navigatorKey.currentState!
-            .popUntil((route) => route.isFirst);
+        widget.navigationBarItems[newIndex].navigatorKey.currentState
+            ?.popUntil((route) => route.isFirst);
       }
 
       setState(() {
