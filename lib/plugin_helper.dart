@@ -571,6 +571,17 @@ class MyPluginHelper {
     // temporary directory and image bytes from response is written to // that file.
     return file;
   }
+
+  static Future<String> getVersionApp() async {
+    try {
+      PackageInfo packageInfo = await PackageInfo.fromPlatform();
+      String version = packageInfo.version;
+      String buildNumber = packageInfo.buildNumber;
+      return '$version ($buildNumber)';
+    } catch (e) {
+      return '';
+    }
+  }
 }
 
 class FullName {
