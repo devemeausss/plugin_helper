@@ -21,7 +21,10 @@ class MyWidgetPhotoViewCustom extends StatefulWidget {
     this.onPageChanged,
     this.children,
     required this.pageController,
+    this.iconBackHeader,
   }) : super(key: key);
+
+  final Widget? iconBackHeader;
 
   /// While [ImageProvider] is not resolved, [loadingBuilder] is called by [PhotoView]
   /// into the screen, by default it is a centered [CircularProgressIndicator]
@@ -103,17 +106,18 @@ class _MyWidgetPhotoViewCustomState extends State<MyWidgetPhotoViewCustom> {
                                   bottom: BorderSide(
                                       color: Colors.grey.withOpacity(0.2)))),
                           alignment: Alignment.centerLeft,
-                          child: GestureDetector(
-                              onTap: () {
-                                Navigator.pop(context);
-                              },
-                              child: const Padding(
-                                padding: EdgeInsets.only(left: 16, top: 25),
-                                child: Icon(
-                                  Icons.arrow_back_ios,
-                                  color: Colors.black,
-                                ),
-                              )),
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 25),
+                            child: IconButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                icon: widget.iconBackHeader ??
+                                    const Icon(
+                                      Icons.arrow_back_ios,
+                                      color: Colors.black,
+                                    )),
+                          ),
                         )),
                 if (widget.customFooter != null)
                   AnimatedOpacity(
