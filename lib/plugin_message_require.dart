@@ -23,6 +23,7 @@ class MyPluginMessageRequire {
   static String day = 'day';
   static String minute = 'minute';
   static String second = 'second';
+  static String cannotPlayVideo = "Can't play video";
 
   static messageRequire({
     required String messageNoConnection,
@@ -48,6 +49,7 @@ class MyPluginMessageRequire {
     String? messageDay,
     String? messageMinute,
     String? messageSecond,
+    String? cannotPlayVideo,
   }) {
     noConnection = messageNoConnection;
     canNotLaunchURL = messageCanNotLaunchURL;
@@ -71,5 +73,6 @@ class MyPluginMessageRequire {
     day = messageDay ?? day;
     minute = messageMinute ?? minute;
     second = messageSecond ?? second;
+    cannotPlayVideo = cannotPlayVideo ?? cannotPlayVideo;
   }
 }

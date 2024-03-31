@@ -79,6 +79,23 @@ class HexColor extends Color {
   HexColor(final String hexColor) : super(_getColorFromHex(hexColor));
 }
 
+extension DurationX on Duration {
+  String get videoDuration {
+    int hour = inHours;
+    int minute = inMinutes;
+    int second = inSeconds;
+    List<int> time = [];
+    if (hour > 0) {
+      time = [hour, minute, second];
+    } else {
+      time = [minute, second];
+    }
+    return time
+        .map((seg) => seg.remainder(60).toString().padLeft(2, '0'))
+        .join(':');
+  }
+}
+
 /// Push the given route onto the navigator.
 Future<T?> push<T>(Widget page, {BuildContext? context}) {
   if (context != null) {
@@ -157,7 +174,7 @@ void goBack<T>({BuildContext? context, T? callback}) {
 
 /// Check whether device is tablet or not.
 bool get kIsTablet {
-  final data = MediaQueryData.fromWindow(
+  final data = MediaQueryData.fromView(
       WidgetsBinding.instance.platformDispatcher.views.single);
   if (Orientation.portrait == data.orientation) {
     return data.size.shortestSide >= 600;
