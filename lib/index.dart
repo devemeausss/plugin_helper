@@ -1,3 +1,4 @@
+export 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 export 'package:cached_network_image/cached_network_image.dart';
 export 'package:collection/collection.dart';
 export 'package:dio/dio.dart';
@@ -20,6 +21,7 @@ export 'package:pull_to_refresh/pull_to_refresh.dart';
 export 'package:share_plus/share_plus.dart';
 export 'package:shared_preferences/shared_preferences.dart';
 export 'package:url_launcher/url_launcher.dart';
+export 'package:video_player/video_player.dart';
 
 export './config/app_assets.dart';
 export './models/image_element_model.dart';
@@ -41,6 +43,7 @@ export './widgets/widget_expanded.dart';
 export './widgets/widget_header_view.dart';
 export './widgets/widget_pinput.dart';
 export './widgets/widget_text_field.dart';
+export './widgets/widget_video_playing.dart';
 export 'extensions.dart';
 export 'plugin_app_environment.dart';
 export 'plugin_authentication.dart';
