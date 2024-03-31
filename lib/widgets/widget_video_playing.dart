@@ -13,6 +13,7 @@ class WidgetVideoPlaying extends StatefulWidget {
   final Color progressBarColor;
   final TextStyle durationStyle;
   final TextStyle positionStyle;
+  final Widget? playIcon, pauseIcon, closeIcon;
   const WidgetVideoPlaying(
       {super.key,
       required this.controller,
@@ -22,7 +23,10 @@ class WidgetVideoPlaying extends StatefulWidget {
       required this.safeViewBottom,
       required this.progressBarColor,
       required this.durationStyle,
-      required this.positionStyle});
+      required this.positionStyle,
+      this.playIcon,
+      this.pauseIcon,
+      this.closeIcon});
 
   @override
   State<WidgetVideoPlaying> createState() => _WidgetVideoPlayingState();
@@ -114,22 +118,28 @@ class _WidgetVideoPlayingState extends State<WidgetVideoPlaying> {
                                   child: Row(
                                     children: [
                                       IconControl(
-                                          onPress: () async {
-                                            if (!_isControl) {
-                                              return;
-                                            }
-                                            if (value.isPlaying) {
-                                              await widget.controller.pause();
-                                            } else {
-                                              widget.controller.play();
-                                            }
-                                          },
-                                          icon: Icon(
-                                            value.isPlaying
-                                                ? Icons.pause
-                                                : Icons.play_arrow_rounded,
-                                            size: 30,
-                                          )),
+                                        onPress: () async {
+                                          if (!_isControl) {
+                                            return;
+                                          }
+                                          if (value.isPlaying) {
+                                            await widget.controller.pause();
+                                          } else {
+                                            widget.controller.play();
+                                          }
+                                        },
+                                        icon: value.isPlaying
+                                            ? (widget.pauseIcon ??
+                                                const Icon(
+                                                  Icons.pause,
+                                                  size: 30,
+                                                ))
+                                            : (widget.playIcon ??
+                                                const Icon(
+                                                  Icons.play_arrow_rounded,
+                                                  size: 30,
+                                                )),
+                                      ),
                                       Expanded(
                                           child: Row(
                                         children: [
@@ -186,10 +196,11 @@ class _WidgetVideoPlayingState extends State<WidgetVideoPlaying> {
                                           widget.controller.seekTo(
                                               const Duration(milliseconds: 0));
                                         },
-                                        icon: const Icon(
-                                          Icons.close,
-                                          size: 20,
-                                        ),
+                                        icon: widget.closeIcon ??
+                                            const Icon(
+                                              Icons.close,
+                                              size: 20,
+                                            ),
                                       )
                                     ],
                                   ),
@@ -207,7 +218,7 @@ class _WidgetVideoPlayingState extends State<WidgetVideoPlaying> {
 
 class IconControl extends StatelessWidget {
   final Function() onPress;
-  final Icon icon;
+  final Widget icon;
   const IconControl({super.key, required this.onPress, required this.icon});
 
   @override
