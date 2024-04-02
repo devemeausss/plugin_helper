@@ -137,7 +137,7 @@ class _MyWidgetPhotoViewCustomState extends State<MyWidgetPhotoViewCustom> {
     return PhotoViewGalleryPageOptions.customChild(
       child: child,
       initialScale: PhotoViewComputedScale.contained,
-      minScale: PhotoViewComputedScale.contained * (0.5 + index / 10),
+      minScale: PhotoViewComputedScale.contained,
       maxScale: PhotoViewComputedScale.covered * 4.1,
       heroAttributes: PhotoViewHeroAttributes(tag: index.toString()),
     );
@@ -172,7 +172,7 @@ class _MyWidgetPhotoViewCustomState extends State<MyWidgetPhotoViewCustom> {
     return PhotoViewGalleryPageOptions(
       imageProvider: imageProvider,
       initialScale: PhotoViewComputedScale.contained,
-      minScale: PhotoViewComputedScale.contained * (0.5 + index / 10),
+      minScale: PhotoViewComputedScale.contained,
       maxScale: PhotoViewComputedScale.covered * 4.1,
       heroAttributes: PhotoViewHeroAttributes(tag: index.toString()),
     );
