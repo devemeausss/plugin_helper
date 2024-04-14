@@ -104,6 +104,7 @@ class MyPluginHelper {
   /// Format currency by locale
   static String formatCurrency(
       {String locale = 'en-US',
+      String symbol = '\$',
       required double number,
       bool isAlwayShowDecimal = false,
       bool isRoundDouble = true,
@@ -113,7 +114,7 @@ class MyPluginHelper {
       num = roundDoubleToNDecimals(num, places);
     }
     NumberFormat formatCurrency =
-        NumberFormat.currency(locale: locale, symbol: '\$');
+        NumberFormat.currency(locale: locale, symbol: symbol);
     try {
       String currency = formatCurrency.format(num);
       if (isAlwayShowDecimal) {
@@ -127,7 +128,7 @@ class MyPluginHelper {
 
       return arr.first;
     } catch (e) {
-      return '\$0${isAlwayShowDecimal ? '.00' : ''}';
+      return '${symbol}0${isAlwayShowDecimal ? '.00' : ''}';
     }
   }
 
