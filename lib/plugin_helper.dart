@@ -119,9 +119,6 @@ class MyPluginHelper {
         NumberFormat.currency(locale: locale, symbol: symbol);
     try {
       String currency = formatCurrency.format(num);
-      if (textDirection == ui.TextDirection.rtl) {
-        currency = "${currency.replaceAll(symbol, '')} $symbol";
-      }
       if (isAlwayShowDecimal) {
         return currency;
       }
@@ -131,10 +128,10 @@ class MyPluginHelper {
         return currency;
       }
 
-      if (textDirection == ui.TextDirection.rtl) {
-        return '${arr.first} $symbol';
+      if (RegExp(r"^\d+$").hasMatch(arr.first)) {
+        return arr.first;
       }
-      return arr.first;
+      return '${arr.first} $symbol';
     } catch (e) {
       String defaultCurrency = '${symbol}0${isAlwayShowDecimal ? '.00' : ''}';
       if (textDirection == ui.TextDirection.rtl) {
