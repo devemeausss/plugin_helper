@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
+import 'dart:ui' as ui;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -105,6 +106,7 @@ class MyPluginHelper {
   static String formatCurrency(
       {String locale = 'en-US',
       String symbol = '\$',
+      ui.TextDirection textDirection = ui.TextDirection.ltr,
       required double number,
       bool isAlwayShowDecimal = false,
       bool isRoundDouble = true,
@@ -117,6 +119,9 @@ class MyPluginHelper {
         NumberFormat.currency(locale: locale, symbol: symbol);
     try {
       String currency = formatCurrency.format(num);
+      if (textDirection == ui.TextDirection.rtl) {
+        currency = "${currency.replaceAll(symbol, '')} $symbol";
+      }
       if (isAlwayShowDecimal) {
         return currency;
       }
@@ -128,7 +133,11 @@ class MyPluginHelper {
 
       return arr.first;
     } catch (e) {
-      return '${symbol}0${isAlwayShowDecimal ? '.00' : ''}';
+      String defaultCurrency = '${symbol}0${isAlwayShowDecimal ? '.00' : ''}';
+      if (textDirection == ui.TextDirection.rtl) {
+        defaultCurrency = "${defaultCurrency.replaceAll(symbol, '')} $symbol";
+      }
+      return defaultCurrency;
     }
   }
 
