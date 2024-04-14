@@ -127,10 +127,13 @@ class MyPluginHelper {
       }
 
       List<String> arr = currency.split('.');
-      if (int.parse(arr.last) != 0) {
+      if (int.parse(arr.last.replaceAll(symbol, '').trim()) != 0) {
         return currency;
       }
 
+      if (textDirection == ui.TextDirection.rtl) {
+        return '${arr.first} $symbol';
+      }
       return arr.first;
     } catch (e) {
       String defaultCurrency = '${symbol}0${isAlwayShowDecimal ? '.00' : ''}';
