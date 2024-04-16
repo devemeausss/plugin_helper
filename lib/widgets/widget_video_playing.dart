@@ -31,7 +31,7 @@ class WidgetVideoPlaying extends StatefulWidget {
 }
 
 class _WidgetVideoPlayingState extends State<WidgetVideoPlaying> {
-  bool _isControl = false;
+  bool _isControl = false, _isLoading = false;
 
   @override
   void initState() {
@@ -44,6 +44,7 @@ class _WidgetVideoPlayingState extends State<WidgetVideoPlaying> {
       if (widget.isInitial) {
         await widget.controller.initialize();
       }
+      widget.controller.seekTo(Duration.zero);
       if (widget.autoplay) {
         widget.controller.play();
       }
@@ -183,16 +184,15 @@ class _WidgetVideoPlayingState extends State<WidgetVideoPlaying> {
                                       )),
                                       IconControl(
                                         onPress: () async {
-                                          if (!_isControl) {
-                                            return;
-                                          }
-                                          Navigator.pop(context);
+                                          if (!_isControl || _isLoading) return;
+                                          _isLoading = true;
                                           if (widget
                                               .controller.value.isPlaying) {
-                                            await widget.controller.pause();
+                                            try {
+                                              await widget.controller.pause();
+                                            } catch (e) {}
                                           }
-                                          widget.controller.seekTo(
-                                              const Duration(milliseconds: 0));
+                                          goBack();
                                         },
                                         icon: widget.closeIcon ??
                                             const Icon(
