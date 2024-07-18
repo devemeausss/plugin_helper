@@ -125,13 +125,16 @@ class MyPluginHelper {
 
       List<String> arr = currency.split('.');
       if (int.parse(arr.last.replaceAll(symbol, '').trim()) != 0) {
+        if (textDirection == ui.TextDirection.rtl) {
+          return "${currency.replaceAll(symbol, '')} $symbol";
+        }
         return currency;
       }
 
-      if (RegExp(r"^\d+$").hasMatch(arr.first)) {
-        return arr.first;
+      if (textDirection == ui.TextDirection.rtl) {
+        return '${arr.first.replaceAll(symbol, '')} $symbol';
       }
-      return '${arr.first} $symbol';
+      return arr.first;
     } catch (e) {
       String defaultCurrency = '${symbol}0${isAlwayShowDecimal ? '.00' : ''}';
       if (textDirection == ui.TextDirection.rtl) {
