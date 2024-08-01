@@ -64,19 +64,11 @@ extension StringX on String {
     return startsWith('+', 0) ||
         startsWith('0', 0); // || RegExp(r'^-?[0-9]+$').hasMatch(this);
   }
-}
 
-/// Convert hex string to Color
-class HexColor extends Color {
-  static int _getColorFromHex(String hexColor) {
-    hexColor = hexColor.toUpperCase().replaceAll("#", "");
-    if (hexColor.length == 6) {
-      hexColor = "FF$hexColor";
-    }
-    return int.parse(hexColor, radix: 16);
+  /// Convert hex string to Color
+  Color hexToColor(String code) {
+    return Color(int.parse(code.substring(1, 7), radix: 16) + 0xFF000000);
   }
-
-  HexColor(final String hexColor) : super(_getColorFromHex(hexColor));
 }
 
 extension DurationX on Duration {
