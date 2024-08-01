@@ -66,8 +66,8 @@ extension StringX on String {
   }
 
   /// Convert hex string to Color
-  Color hexToColor(String code) {
-    return Color(int.parse(code.substring(1, 7), radix: 16) + 0xFF000000);
+  Color get hexToColor {
+    return Color(int.parse(substring(1, 7), radix: 16) + 0xFF000000);
   }
 }
 
