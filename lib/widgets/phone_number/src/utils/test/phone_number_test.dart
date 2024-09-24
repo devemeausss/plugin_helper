@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:collection/collection.dart' show IterableExtension;
-import 'package:libphonenumber/libphonenumber.dart';
 import 'package:plugin_helper/widgets/phone_number/src/models/country_list.dart';
+import 'package:plugin_helper/widgets/phone_number/src/utils/phone_number/phone_number_util.dart';
 
 class PhoneNumberTest {
   final String? phoneNumber;
@@ -56,7 +56,7 @@ class PhoneNumberTest {
   }
 
   String parseNumber() {
-    return phoneNumber!.replaceAll(RegExp('^([\\+]?${dialCode}[\\s]?)'), '');
+    return phoneNumber!.replaceAll(RegExp('^([\\+]?$dialCode[\\s]?)'), '');
   }
 
   static String? getISO2CodeByPrefix(String prefix) {
