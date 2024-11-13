@@ -114,6 +114,7 @@ class _MaterialBottomNavigationScaffoldState
   @override
   void dispose() {
     for (var controller in _animationControllers) {
+      controller.stop();
       controller.dispose();
     }
 
