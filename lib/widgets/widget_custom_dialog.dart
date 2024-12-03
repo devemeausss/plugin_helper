@@ -78,6 +78,9 @@ class MyWidgetCustomDialog extends StatefulWidget {
   /// This property indicates whether the close icon is show or not.
   final bool isShowCloseIcon;
 
+  /// This property align description
+  final TextAlign? descriptionAlign;
+
   const MyWidgetCustomDialog({
     Key? key,
     this.title,
@@ -104,6 +107,7 @@ class MyWidgetCustomDialog extends StatefulWidget {
     this.headerCustom,
     this.alignmentPrimaryRow = AlignmentButtonRow.left,
     this.alignmentPrimaryColumn = AlignmentButtonColum.up,
+    this.descriptionAlign,
   }) : super(key: key);
 
   @override
@@ -157,7 +161,8 @@ class _CustomDialogState extends State<MyWidgetCustomDialog> {
                         Text(
                           widget.descriptions!,
                           style: widget.texStyleDescription,
-                          textAlign: TextAlign.center,
+                          textAlign:
+                              widget.descriptionAlign ?? TextAlign.center,
                         ),
                       SizedBox(height: widget.spaceBetweenMessageAndButton!),
                     ],
