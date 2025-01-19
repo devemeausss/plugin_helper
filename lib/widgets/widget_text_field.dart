@@ -197,6 +197,8 @@ class MyWidgetTextField extends StatefulWidget {
   /// Defines how the floating label should behave.
   final FloatingLabelBehavior? floatingLabelBehavior;
 
+  final bool autocorrect;
+
   const MyWidgetTextField({
     Key? key,
     this.prefixIcon,
@@ -262,6 +264,7 @@ class MyWidgetTextField extends StatefulWidget {
     this.expands = false,
     this.spellCheckConfiguration,
     this.floatingLabelBehavior,
+    this.autocorrect = true,
   }) : super(key: key);
 
   @override
@@ -501,6 +504,7 @@ class _WidgetTextFieldState extends State<MyWidgetTextField> {
         Container(
           decoration: widget.boxDecorationTextField,
           child: TextFormField(
+            autocorrect: widget.autocorrect,
             magnifierConfiguration: widget.magnifierConfiguration,
             autofocus: widget.autoFocus,
             textInputAction: widget.textInputAction,
