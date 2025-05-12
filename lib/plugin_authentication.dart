@@ -39,11 +39,6 @@ class MyPluginAuthentication {
         return false;
       }
     } catch (e) {
-      if (!kIsWeb && Platform.isLinux) {
-        await prefs.clear();
-      } else {
-        await storage.deleteAll();
-      }
       return false;
     }
   }
