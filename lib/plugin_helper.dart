@@ -108,7 +108,7 @@ class MyPluginHelper {
       String symbol = '\$',
       ui.TextDirection textDirection = ui.TextDirection.ltr,
       required double number,
-      bool isAlwayShowDecimal = false,
+      bool isAlwayShowDecimal = true,
       bool isRoundDouble = true,
       int places = 2}) {
     double num = number;
