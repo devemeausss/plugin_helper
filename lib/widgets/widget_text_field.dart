@@ -185,6 +185,9 @@ class MyWidgetTextField extends StatefulWidget {
   /// Customize a decoration for the text field.
   final Decoration? boxDecorationTextField;
 
+  /// Customize a padding for the text field.
+  final EdgeInsetsGeometry? paddingTextField;
+
   /// Manage magnifier;
   final TextMagnifierConfiguration? magnifierConfiguration;
 
@@ -265,6 +268,7 @@ class MyWidgetTextField extends StatefulWidget {
     this.spellCheckConfiguration,
     this.floatingLabelBehavior,
     this.autocorrect = true,
+    this.paddingTextField,
   }) : super(key: key);
 
   @override
@@ -502,6 +506,7 @@ class _WidgetTextFieldState extends State<MyWidgetTextField> {
             ),
           ),
         Container(
+          padding: widget.paddingTextField,
           decoration: widget.boxDecorationTextField,
           child: TextFormField(
             autocorrect: widget.autocorrect,
