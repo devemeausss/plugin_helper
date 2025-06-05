@@ -14,7 +14,7 @@ dependencies:
   plugin_helper:
     git:
       url: https://github.com/devemeausss/plugin_helper
-      ref: 214090b9b1d56f6cea89fbdb3f9104cef3b9637e
+      ref: f015e4a1966989d6b8f3011aab53112161ecf7c2
 ```
 
 ## Usages
