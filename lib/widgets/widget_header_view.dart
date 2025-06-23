@@ -69,7 +69,7 @@ class MyWidgetHeader extends StatelessWidget implements PreferredSizeWidget {
   /// if the overall theme's brightness is [Brightness.light], and [ColorScheme.surface]
   /// if the overall theme's [brightness] is [Brightness.dark].
   ///
-  /// If this color is a [MaterialStateColor] it will be resolved against
+  /// If this color is a [WidgetStateColor] it will be resolved against
   /// [MaterialState.scrolledUnder{super.key}{super.key}{super.key}{super.key}]
   /// when the content of the app's primary scrollable overlaps the app bar.
   final Color? backgroundColor;
@@ -118,7 +118,7 @@ class MyWidgetHeader extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: backgroundColor,
       leadingWidth: leadingWidth,
       leading: isShowLeftIcon
-          ? GestureDetector(
+          ? InkWell(
               onTap: () {
                 if (onPressLeftIcon != null) {
                   onPressLeftIcon!();

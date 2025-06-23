@@ -68,7 +68,7 @@ class _MyWidgetPhotoViewCustomState extends State<MyWidgetPhotoViewCustom> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: GestureDetector(
+      body: InkWell(
           onTap: () {
             setState(() {
               _isShowClose = !_isShowClose;
@@ -99,15 +99,14 @@ class _MyWidgetPhotoViewCustomState extends State<MyWidgetPhotoViewCustom> {
                     child: widget.customHeader ??
                         Container(
                           width: double.infinity,
-                          height: 80,
+                          height: kToolbarHeight,
                           decoration: BoxDecoration(
                               color: Colors.grey[100],
                               border: Border(
                                   bottom: BorderSide(
                                       color: Colors.grey.withOpacity(0.2)))),
                           alignment: Alignment.centerLeft,
-                          child: Padding(
-                            padding: const EdgeInsets.only(top: 25),
+                          child: SafeArea(
                             child: IconButton(
                                 onPressed: () {
                                   Navigator.pop(context);
