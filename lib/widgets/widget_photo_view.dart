@@ -66,6 +66,8 @@ class _MyWidgetPhotoViewCustomState extends State<MyWidgetPhotoViewCustom> {
 
   @override
   Widget build(BuildContext context) {
+    double top = MediaQuery.of(context).viewPadding.top;
+    top = top > 0 ? top + 50 : 80;
     return Scaffold(
       backgroundColor: Colors.black,
       body: InkWell(
@@ -99,14 +101,15 @@ class _MyWidgetPhotoViewCustomState extends State<MyWidgetPhotoViewCustom> {
                     child: widget.customHeader ??
                         Container(
                           width: double.infinity,
-                          height: kToolbarHeight,
+                          height: top,
                           decoration: BoxDecoration(
                               color: Colors.grey[100],
                               border: Border(
                                   bottom: BorderSide(
                                       color: Colors.grey.withOpacity(0.2)))),
                           alignment: Alignment.centerLeft,
-                          child: SafeArea(
+                          child: Padding(
+                            padding: EdgeInsets.only(top: top / 2),
                             child: IconButton(
                                 onPressed: () {
                                   Navigator.pop(context);
