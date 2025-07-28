@@ -561,8 +561,6 @@ class MyPluginHelper {
         return [FilteringTextInputFormatter.allow(RegExp(r'[-0-9]'))];
       case RegExpType.onlyCharacter:
         return [FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z]'))];
-      default:
-        return [FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))];
     }
   }
 

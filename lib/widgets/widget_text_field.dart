@@ -453,8 +453,6 @@ class _WidgetTextFieldState extends State<MyWidgetTextField> {
         return MyPluginMessageRequire.invalidExpired;
       case ValidType.cvv:
         return MyPluginMessageRequire.invalidCvv;
-      default:
-        return '';
     }
   }
 

@@ -107,7 +107,6 @@ class MyWidgetDatePicker extends StatelessWidget {
               onConfirm: _onConfirm,
             );
             break;
-          default:
         }
       },
       child: child,
