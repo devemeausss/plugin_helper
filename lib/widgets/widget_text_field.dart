@@ -202,6 +202,8 @@ class MyWidgetTextField extends StatefulWidget {
 
   final bool autocorrect;
 
+  final TextAlign textAlign;
+
   const MyWidgetTextField({
     Key? key,
     this.prefixIcon,
@@ -269,6 +271,7 @@ class MyWidgetTextField extends StatefulWidget {
     this.floatingLabelBehavior,
     this.autocorrect = true,
     this.paddingTextField,
+    this.textAlign = TextAlign.left,
   }) : super(key: key);
 
   @override
@@ -529,6 +532,7 @@ class _WidgetTextFieldState extends State<MyWidgetTextField> {
             minLines: widget.minLines,
             expands: widget.expands,
             textAlignVertical: TextAlignVertical.center,
+            textAlign: widget.textAlign,
             keyboardAppearance: widget.keyboardAppearance,
             spellCheckConfiguration: widget.spellCheckConfiguration,
             decoration: InputDecoration(
