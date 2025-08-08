@@ -324,10 +324,10 @@ packages:
     dependency: "direct main"
     description:
       name: http
-      sha256: b9c29a161230ee03d3ccf545097fccd9b87a5264228c5d348202e0f0c28f9010
+      sha256: bb2ce4590bc2667c96f318d68cac1b5a7987ec819351d32b1c987239a815e007
       url: "https://pub.dev"
     source: hosted
-    version: "1.2.2"
+    version: "1.5.0"
   http_client_helper:
     dependency: transitive
     description:
@@ -532,10 +532,10 @@ packages:
     dependency: "direct main"
     description:
       name: new_version_plus
-      sha256: "595001d98f2c6bea05eff2cd6614c1c42e344a13f2dc2aed3b836593d0a9621c"
+      sha256: db35c04e3174eda88f0c570d12bee37e9d27620d9e23dcd61bf07d0fde7d074b
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.12"
+    version: "0.1.0"
   octo_image:
     dependency: transitive
     description:
@@ -1087,5 +1087,5 @@ packages:
     source: hosted
     version: "6.5.0"
 sdks:
-  dart: ">=3.6.0 <4.0.0"
+  dart: ">=3.6.1 <4.0.0"
   flutter: ">=3.27.0"
