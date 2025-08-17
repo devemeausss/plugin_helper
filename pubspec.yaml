@@ -10,8 +10,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  shared_preferences: ^2.2.3
-  flutter_secure_storage: ^9.2.2
+  shared_preferences: ^2.5.3
+  flutter_secure_storage: ^9.2.4
   intl: ^0.19.0
   dio: ^5.0.3
   path_provider: ^2.0.13
