@@ -23,6 +23,8 @@ class MyPluginAppConstraints {
 class MyPluginAuthentication {
   static const storage = FlutterSecureStorage();
 
+  static int _retryCheckToken = 0;
+
   /// Check whether token exists or not.
   static Future<bool> hasToken() async {
     final prefs = await SharedPreferences.getInstance();
@@ -33,12 +35,20 @@ class MyPluginAuthentication {
       }
       token = await storage.read(key: MyPluginAppConstraints.token);
 
+      _retryCheckToken = 0;
       if (token != null) {
         return true;
       } else {
         return false;
       }
     } catch (e) {
+      if (_retryCheckToken < 2) {
+        await Future.delayed(const Duration(milliseconds: 500));
+        _retryCheckToken++;
+        await hasToken();
+      }
+
+      _retryCheckToken = 0;
       return false;
     }
   }
