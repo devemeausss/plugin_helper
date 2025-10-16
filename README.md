@@ -5,7 +5,7 @@ A plugin supports for boilerplate mobile (Flutter). Only use, do not edit.
 
 ## SDK
  - Flutter
- - Version: 3.13.2 or newer
+ - Version: 3.32.8 or newer
  
 ## Getting started
 This will add a line like this to your package's pubspec.yaml (and run an implicit flutter pub get):
@@ -14,7 +14,7 @@ dependencies:
   plugin_helper:
     git:
       url: https://github.com/devemeausss/plugin_helper
-      ref: 359699b2dbf79b0e1577d91c6302bcfb35092e92
+      ref: a3234006ebe4b3a5b27a3e4e2a41350ae2fa4c8d
 ```
 
 ## Usages
