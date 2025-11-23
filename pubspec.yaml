@@ -21,7 +21,7 @@ dependencies:
   url_launcher: ^6.1.10
   http: ^1.1.0
   new_version_plus: ^0.1.0
-  cached_network_image: ^3.3.1
+  cached_network_image: ^3.4.1
   pull_to_refresh: ^2.0.0
   pin_code_fields: 
     git:
