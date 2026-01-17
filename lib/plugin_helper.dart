@@ -8,6 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+import 'package:new_version_plus/model/version_status.dart' show VersionStatus;
 import 'package:path/path.dart' as path;
 import 'package:plugin_helper/widgets/phone_number/src/models/country_list.dart';
 import 'package:plugin_helper/widgets/phone_number/src/utils/phone_number/phone_number_util.dart';
@@ -221,6 +222,7 @@ class MyPluginHelper {
         return '';
       }
     } catch (e) {
+      if (!context.mounted) return '';
       Navigator.pop(context);
       onError(e);
       return '';
