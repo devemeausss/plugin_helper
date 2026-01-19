@@ -20,7 +20,7 @@ dependencies:
     file_picker: ^10.3.8
     url_launcher: ^6.3.2
     http: ^1.6.0
-    new_version_plus: ^1.0.1
+    new_version_plus: ^1.0.0
     cached_network_image: ^3.4.1
     pull_to_refresh: ^2.0.0
     pin_code_fields:
