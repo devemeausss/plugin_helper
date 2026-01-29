@@ -204,8 +204,10 @@ class MyWidgetTextField extends StatefulWidget {
 
   final TextAlign textAlign;
 
+  final Function(String)? onChanged;
+
   const MyWidgetTextField({
-    Key? key,
+    super.key,
     this.prefixIcon,
     this.label,
     this.onSuffixIconTap,
@@ -272,7 +274,8 @@ class MyWidgetTextField extends StatefulWidget {
     this.autocorrect = true,
     this.paddingTextField,
     this.textAlign = TextAlign.left,
-  }) : super(key: key);
+    this.onChanged,
+  });
 
   @override
   _WidgetTextFieldState createState() => _WidgetTextFieldState();
@@ -308,7 +311,7 @@ class _WidgetTextFieldState extends State<MyWidgetTextField> {
     widget.controller.addListener(checkValidate);
   }
 
-  checkValidate() async {
+  Future<void> checkValidate() async {
     await Future.delayed(const Duration(milliseconds: 100));
     switch (widget.validType) {
       case ValidType.none:
@@ -323,8 +326,9 @@ class _WidgetTextFieldState extends State<MyWidgetTextField> {
           }
         } else {
           if (MyPluginHelper.isValidPassword(
-              password: widget.controller.text,
-              passwordValidType: widget.passwordValidType)) {
+            password: widget.controller.text,
+            passwordValidType: widget.passwordValidType,
+          )) {
             setValid();
           } else {
             setInValid();
@@ -356,7 +360,8 @@ class _WidgetTextFieldState extends State<MyWidgetTextField> {
         break;
       case ValidType.fullName:
         if (MyPluginHelper.isValidFullName(
-            text: widget.controller.text.trim())) {
+          text: widget.controller.text.trim(),
+        )) {
           setValid();
         } else {
           setInValid();
@@ -414,7 +419,7 @@ class _WidgetTextFieldState extends State<MyWidgetTextField> {
     }
   }
 
-  setValid() {
+  void setValid() {
     if (!mounted) return;
     _valid = true;
     setState(() {});
@@ -423,7 +428,7 @@ class _WidgetTextFieldState extends State<MyWidgetTextField> {
     }
   }
 
-  setInValid() {
+  void setInValid() {
     if (!mounted) return;
     _valid = false;
     setState(() {});
@@ -460,29 +465,23 @@ class _WidgetTextFieldState extends State<MyWidgetTextField> {
   }
 
   OutlineInputBorder get errorBorder => OutlineInputBorder(
-        borderRadius: BorderRadius.circular(widget.borderRadius!),
-        borderSide: BorderSide(
-          color: widget.errorBorderColor ?? Colors.red[400]!,
-        ),
-      );
+    borderRadius: BorderRadius.circular(widget.borderRadius!),
+    borderSide: BorderSide(color: widget.errorBorderColor ?? Colors.red[400]!),
+  );
   OutlineInputBorder get border => OutlineInputBorder(
-        borderRadius: BorderRadius.circular(widget.borderRadius!),
-        borderSide: BorderSide(
-          color: widget.borderColor ?? Colors.grey[400]!,
-        ),
-      );
+    borderRadius: BorderRadius.circular(widget.borderRadius!),
+    borderSide: BorderSide(color: widget.borderColor ?? Colors.grey[400]!),
+  );
   OutlineInputBorder get focusBorder => OutlineInputBorder(
-        borderRadius: BorderRadius.circular(widget.borderRadius!),
-        borderSide: BorderSide(
-          color: widget.focusBorderColor ?? Colors.green,
-        ),
-      );
+    borderRadius: BorderRadius.circular(widget.borderRadius!),
+    borderSide: BorderSide(color: widget.focusBorderColor ?? Colors.green),
+  );
   OutlineInputBorder get disableBorder => OutlineInputBorder(
-        borderRadius: BorderRadius.circular(widget.borderRadius!),
-        borderSide: BorderSide(
-          color: widget.disabledBorderColor ?? Colors.grey[400]!,
-        ),
-      );
+    borderRadius: BorderRadius.circular(widget.borderRadius!),
+    borderSide: BorderSide(
+      color: widget.disabledBorderColor ?? Colors.grey[400]!,
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -492,15 +491,13 @@ class _WidgetTextFieldState extends State<MyWidgetTextField> {
         if (widget.textFieldType == TextFieldType.normal &&
             widget.label != null)
           Padding(
-            padding:
-                EdgeInsets.only(bottom: widget.spaceBetweenLabelAndTextField!),
+            padding: EdgeInsets.only(
+              bottom: widget.spaceBetweenLabelAndTextField!,
+            ),
             child: Row(
               children: [
                 if (widget.prefixIconLabel != null) widget.prefixIconLabel!,
-                Text(
-                  widget.label!,
-                  style: widget.labelStyle,
-                ),
+                Text(widget.label!, style: widget.labelStyle),
                 if (widget.customLabelOfTextFieldNormal != null)
                   widget.customLabelOfTextFieldNormal!,
               ],
@@ -510,6 +507,7 @@ class _WidgetTextFieldState extends State<MyWidgetTextField> {
           padding: widget.paddingTextField,
           decoration: widget.boxDecorationTextField,
           child: TextFormField(
+            onChanged: widget.onChanged,
             autocorrect: widget.autocorrect,
             magnifierConfiguration: widget.magnifierConfiguration,
             autofocus: widget.autoFocus,
@@ -544,8 +542,10 @@ class _WidgetTextFieldState extends State<MyWidgetTextField> {
               counter: widget.maxLength != null && _hasFocus
                   ? Text(
                       "${widget.controller.text.characters.length} /${widget.maxLength}",
-                      style: widget.textStyleCounter ??
-                          const TextStyle(fontSize: 13))
+                      style:
+                          widget.textStyleCounter ??
+                          const TextStyle(fontSize: 13),
+                    )
                   : null,
               errorMaxLines: 3,
               labelStyle: widget.textFieldType == TextFieldType.animation
@@ -553,12 +553,13 @@ class _WidgetTextFieldState extends State<MyWidgetTextField> {
                   : null,
               errorText:
                   ((!_valid && _hasChanged) || widget.textError != null) &&
-                          widget.showError!
-                      ? getError()
-                      : null,
+                      widget.showError!
+                  ? getError()
+                  : null,
               errorBorder: widget.errorBorder ?? errorBorder,
               focusedErrorBorder: widget.errorBorder ?? errorBorder,
-              contentPadding: widget.contentPadding ??
+              contentPadding:
+                  widget.contentPadding ??
                   const EdgeInsets.symmetric(horizontal: 17, vertical: 11),
               border: widget.border ?? border,
               enabledBorder: widget.border ?? border,
@@ -571,22 +572,29 @@ class _WidgetTextFieldState extends State<MyWidgetTextField> {
               filled: true,
               disabledBorder: widget.disabledBorder ?? disableBorder,
               errorStyle: widget.errorStyle,
-              prefixIconConstraints:
-                  const BoxConstraints(minWidth: 0, minHeight: 0),
-              prefixIcon: widget.validType == ValidType.password &&
+              prefixIconConstraints: const BoxConstraints(
+                minWidth: 0,
+                minHeight: 0,
+              ),
+              prefixIcon:
+                  widget.validType == ValidType.password &&
                       widget.alignmentPasswordIcon == AlignmentPasswordIcon.left
                   ? _suffixIcon
                   : widget.prefixIcon != null
-                      ? Padding(
-                          padding: EdgeInsets.only(
-                              left: widget.paddingLeftPrefixIcon!,
-                              right: widget.paddingRightPrefixIcon!),
-                          child: widget.prefixIcon,
-                        )
-                      : null,
-              suffixIconConstraints:
-                  const BoxConstraints(minWidth: 0, minHeight: 0),
-              suffixIcon: widget.validType == ValidType.password &&
+                  ? Padding(
+                      padding: EdgeInsets.only(
+                        left: widget.paddingLeftPrefixIcon!,
+                        right: widget.paddingRightPrefixIcon!,
+                      ),
+                      child: widget.prefixIcon,
+                    )
+                  : null,
+              suffixIconConstraints: const BoxConstraints(
+                minWidth: 0,
+                minHeight: 0,
+              ),
+              suffixIcon:
+                  widget.validType == ValidType.password &&
                       widget.alignmentPasswordIcon == AlignmentPasswordIcon.left
                   ? null
                   : _suffixIcon,
@@ -604,8 +612,9 @@ class _WidgetTextFieldState extends State<MyWidgetTextField> {
         ? null
         : Padding(
             padding: EdgeInsets.only(
-                left: widget.paddingLeftSuffixIcon!,
-                right: widget.paddingRightSuffixIcon!),
+              left: widget.paddingLeftSuffixIcon!,
+              right: widget.paddingRightSuffixIcon!,
+            ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.end,
