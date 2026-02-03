@@ -17,19 +17,9 @@ import './index.dart';
 
 var dio = Dio();
 
-enum PasswordValidType {
-  atLeast8Characters,
-  strongPassword,
-  notEmpty,
-}
+enum PasswordValidType { atLeast8Characters, strongPassword, notEmpty }
 
-enum CardType {
-  otherBrand,
-  mastercard,
-  visa,
-  americanExpress,
-  discover,
-}
+enum CardType { otherBrand, mastercard, visa, americanExpress, discover }
 
 enum RegExpType {
   numberWithDecimal,
@@ -69,10 +59,10 @@ class MyPluginHelper {
     return phone;
   }
 
-  static bool isValidPassword(
-      {required String password,
-      PasswordValidType passwordValidType =
-          PasswordValidType.atLeast8Characters}) {
+  static bool isValidPassword({
+    required String password,
+    PasswordValidType passwordValidType = PasswordValidType.atLeast8Characters,
+  }) {
     switch (passwordValidType) {
       case PasswordValidType.atLeast8Characters:
         return password.length >= 8;
@@ -85,16 +75,22 @@ class MyPluginHelper {
     }
   }
 
-  static Future<String?> getParsedPhoneNumber(
-      {required String phoneNumber, String? isoCode}) async {
+  static Future<String?> getParsedPhoneNumber({
+    required String phoneNumber,
+    String? isoCode,
+  }) async {
     if (phoneNumber.isNotEmpty && isoCode != null) {
       try {
         bool? isValidPhoneNumber = await PhoneNumberUtil.isValidNumber(
-            phoneNumber: phoneNumber, isoCode: isoCode);
+          phoneNumber: phoneNumber,
+          isoCode: isoCode,
+        );
 
         if (isValidPhoneNumber!) {
           return await PhoneNumberUtil.normalizePhoneNumber(
-              phoneNumber: phoneNumber, isoCode: isoCode);
+            phoneNumber: phoneNumber,
+            isoCode: isoCode,
+          );
         }
       } on Exception {
         return null;
@@ -104,20 +100,23 @@ class MyPluginHelper {
   }
 
   /// Format currency by locale
-  static String formatCurrency(
-      {String locale = 'en-US',
-      String symbol = '\$',
-      ui.TextDirection textDirection = ui.TextDirection.ltr,
-      required double number,
-      bool isAlwayShowDecimal = true,
-      bool isRoundDouble = true,
-      int places = 2}) {
+  static String formatCurrency({
+    String locale = 'en-US',
+    String symbol = '\$',
+    ui.TextDirection textDirection = ui.TextDirection.ltr,
+    required double number,
+    bool isAlwayShowDecimal = true,
+    bool isRoundDouble = true,
+    int places = 2,
+  }) {
     double num = number;
     if (isRoundDouble) {
       num = roundDoubleToNDecimals(num, places);
     }
-    NumberFormat formatCurrency =
-        NumberFormat.currency(locale: locale, symbol: symbol);
+    NumberFormat formatCurrency = NumberFormat.currency(
+      locale: locale,
+      symbol: symbol,
+    );
     try {
       String currency = formatCurrency.format(num);
       if (isAlwayShowDecimal) {
@@ -229,7 +228,10 @@ class MyPluginHelper {
     }
   }
 
-  static launchFromUrl({required String url, String? error}) async {
+  static Future<void> launchFromUrl({
+    required String url,
+    String? error,
+  }) async {
     if (url.contains('https://') == false || url.contains('http://') == false) {
       url = 'https://$url';
     }
@@ -245,10 +247,11 @@ class MyPluginHelper {
   }
 
   /// Format utc time from the server to local time
-  static String formatUtcTime(
-      {required String dateUtc,
-      String? format = 'dd/MM/yyyy HH:mm:ss',
-      String languageCode = 'en'}) {
+  static String formatUtcTime({
+    required String dateUtc,
+    String? format = 'dd/MM/yyyy HH:mm:ss',
+    String languageCode = 'en',
+  }) {
     try {
       String date = dateUtc;
       if (!date.contains("Z")) {
@@ -284,10 +287,11 @@ class MyPluginHelper {
   /// Strong formatTime = MyPluginHelper.convertTimeToHourOrDay(dateTime);
   /// ```
   /// Output: 2 hours
-  static String convertTimeToHourOrDay(
-      {required String dateTime,
-      String? format = 'dd/MM/yyyy HH:mm:ss',
-      String languageCode = 'en'}) {
+  static String convertTimeToHourOrDay({
+    required String dateTime,
+    String? format = 'dd/MM/yyyy HH:mm:ss',
+    String languageCode = 'en',
+  }) {
     try {
       var date = DateFormat(format, languageCode).parse(dateTime);
       final dateNow = DateTime.now();
@@ -316,16 +320,18 @@ class MyPluginHelper {
   }
 
   /// Check version to redirect app updates
-  static checkUpdateApp(
-      {required String iOSId,
-      required String androidId,
-      String? iOSAppStoreCountry,
-      required Function(VersionStatus) onUpdate,
-      required VoidCallback onError}) async {
+  static Future<void> checkUpdateApp({
+    required String iOSId,
+    required String androidId,
+    String? iOSAppStoreCountry,
+    required Function(VersionStatus) onUpdate,
+    required VoidCallback onError,
+  }) async {
     final newVersion = NewVersionPlus(
-        androidId: androidId,
-        iOSId: iOSId,
-        iOSAppStoreCountry: iOSAppStoreCountry);
+      androidId: androidId,
+      iOSId: iOSId,
+      iOSAppStoreCountry: iOSAppStoreCountry,
+    );
     try {
       final status = await newVersion.getVersionStatus();
       onUpdate(status!);
@@ -383,32 +389,41 @@ class MyPluginHelper {
     double? maxHeight,
     double? width,
     EdgeInsets? padding,
+    BoxConstraints? boxConstraints,
+    bool useSafeArea = false,
   }) async {
     return await showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        isDismissible: isDismissible,
-        backgroundColor: backgroundColor,
-        elevation: 0,
-        constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).size.height * 0.98),
-        shape: shape ??
-            RoundedRectangleBorder(
-                borderRadius:
-                    BorderRadius.vertical(top: Radius.circular(radiusShape))),
-        builder: (context) => Padding(
-            padding: padding ?? MediaQuery.of(context).viewInsets,
-            child: Container(
-              width: width ?? MediaQuery.of(context).size.width,
-              constraints: BoxConstraints(
-                  maxHeight:
-                      maxHeight ?? MediaQuery.of(context).size.height * 0.8),
-              child: child,
-            )));
+      context: context,
+      isScrollControlled: true,
+      isDismissible: isDismissible,
+      backgroundColor: backgroundColor,
+      elevation: 0,
+      useSafeArea: useSafeArea,
+      constraints:
+          boxConstraints ??
+          BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.98),
+      shape:
+          shape ??
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(radiusShape),
+            ),
+          ),
+      builder: (context) => Padding(
+        padding: padding ?? MediaQuery.of(context).viewInsets,
+        child: Container(
+          width: width ?? MediaQuery.of(context).size.width,
+          constraints: BoxConstraints(
+            maxHeight: maxHeight ?? MediaQuery.of(context).size.height * 0.8,
+          ),
+          child: child,
+        ),
+      ),
+    );
   }
 
   /// Specifies the set of orientations the application interface can be displayed in.
-  static setOrientation({bool isPortrait = true}) {
+  static void setOrientation({bool isPortrait = true}) {
     if (!isPortrait) {
       SystemChrome.setPreferredOrientations([
         DeviceOrientation.landscapeRight,
@@ -430,28 +445,28 @@ class MyPluginHelper {
   /// i.e. ['51', '55'] represents the range of cards starting with '51' to those starting with '55'
   static Map<CardType, Set<List<String>>> cardNumPatterns =
       <CardType, Set<List<String>>>{
-    CardType.visa: <List<String>>{
-      <String>['4'],
-    },
-    CardType.americanExpress: <List<String>>{
-      <String>['34'],
-      <String>['37'],
-    },
-    CardType.discover: <List<String>>{
-      <String>['6011'],
-      <String>['622126', '622925'],
-      <String>['644', '649'],
-      <String>['65']
-    },
-    CardType.mastercard: <List<String>>{
-      <String>['51', '55'],
-      <String>['2221', '2229'],
-      <String>['223', '229'],
-      <String>['23', '26'],
-      <String>['270', '271'],
-      <String>['2720'],
-    },
-  };
+        CardType.visa: <List<String>>{
+          <String>['4'],
+        },
+        CardType.americanExpress: <List<String>>{
+          <String>['34'],
+          <String>['37'],
+        },
+        CardType.discover: <List<String>>{
+          <String>['6011'],
+          <String>['622126', '622925'],
+          <String>['644', '649'],
+          <String>['65'],
+        },
+        CardType.mastercard: <List<String>>{
+          <String>['51', '55'],
+          <String>['2221', '2229'],
+          <String>['223', '229'],
+          <String>['23', '26'],
+          <String>['270', '271'],
+          <String>['2720'],
+        },
+      };
 
   /// This function determines the Credit Card type based on the cardPatterns
   /// and returns it.
@@ -463,42 +478,39 @@ class MyPluginHelper {
       return cardType;
     }
 
-    cardNumPatterns.forEach(
-      (CardType type, Set<List<String>> patterns) {
-        for (List<String> patternRange in patterns) {
-          // Remove any spaces
-          String ccPatternStr =
-              cardNumber.replaceAll(RegExp(r'\s+\b|\b\s'), '');
-          final int rangeLen = patternRange[0].length;
-          // Trim the Credit Card number string to match the pattern prefix length
-          if (rangeLen < cardNumber.length) {
-            ccPatternStr = ccPatternStr.substring(0, rangeLen);
-          }
+    cardNumPatterns.forEach((CardType type, Set<List<String>> patterns) {
+      for (List<String> patternRange in patterns) {
+        // Remove any spaces
+        String ccPatternStr = cardNumber.replaceAll(RegExp(r'\s+\b|\b\s'), '');
+        final int rangeLen = patternRange[0].length;
+        // Trim the Credit Card number string to match the pattern prefix length
+        if (rangeLen < cardNumber.length) {
+          ccPatternStr = ccPatternStr.substring(0, rangeLen);
+        }
 
-          if (patternRange.length > 1) {
-            // Convert the prefix range into numbers then make sure the
-            // Credit Card num is in the pattern range.
-            // Because Strings don't have '>=' type operators
-            final int ccPrefixAsInt = int.parse(ccPatternStr);
-            final int startPatternPrefixAsInt = int.parse(patternRange[0]);
-            final int endPatternPrefixAsInt = int.parse(patternRange[1]);
-            if (ccPrefixAsInt >= startPatternPrefixAsInt &&
-                ccPrefixAsInt <= endPatternPrefixAsInt) {
-              // Found a match
-              cardType = type;
-              break;
-            }
-          } else {
-            // Just compare the single pattern prefix with the Credit Card prefix
-            if (ccPatternStr == patternRange[0]) {
-              // Found a match
-              cardType = type;
-              break;
-            }
+        if (patternRange.length > 1) {
+          // Convert the prefix range into numbers then make sure the
+          // Credit Card num is in the pattern range.
+          // Because Strings don't have '>=' type operators
+          final int ccPrefixAsInt = int.parse(ccPatternStr);
+          final int startPatternPrefixAsInt = int.parse(patternRange[0]);
+          final int endPatternPrefixAsInt = int.parse(patternRange[1]);
+          if (ccPrefixAsInt >= startPatternPrefixAsInt &&
+              ccPrefixAsInt <= endPatternPrefixAsInt) {
+            // Found a match
+            cardType = type;
+            break;
+          }
+        } else {
+          // Just compare the single pattern prefix with the Credit Card prefix
+          if (ccPatternStr == patternRange[0]) {
+            // Found a match
+            cardType = type;
+            break;
           }
         }
-      },
-    );
+      }
+    });
 
     return cardType;
   }
@@ -521,11 +533,12 @@ class MyPluginHelper {
   }
 
   /// Get link image from the cloudfront server
-  static String getLinkImage(
-      {required String key,
-      double? width,
-      double? height,
-      BoxFit fit = BoxFit.cover}) {
+  static String getLinkImage({
+    required String key,
+    double? width,
+    double? height,
+    BoxFit fit = BoxFit.cover,
+  }) {
     Map<String, dynamic> data = {
       "bucket": MyPluginAppEnvironment().bucket,
       "key": key,
@@ -536,8 +549,8 @@ class MyPluginHelper {
         "resize": {
           "width": width,
           "height": height,
-          "fit": fit.toString().replaceAll('BoxFit.', '')
-        }
+          "fit": fit.toString().replaceAll('BoxFit.', ''),
+        },
       };
     }
     var json = jsonEncode(data);
@@ -551,11 +564,11 @@ class MyPluginHelper {
     switch (type) {
       case RegExpType.numberWithDecimal:
         return [
-          FilteringTextInputFormatter.allow(RegExp(r'^(\d+)?\.?\d{0,2}'))
+          FilteringTextInputFormatter.allow(RegExp(r'^(\d+)?\.?\d{0,2}')),
         ];
       case RegExpType.numberWithDecimalWithNegative:
         return [
-          FilteringTextInputFormatter.allow(RegExp(r'^-?(\d+)?\.?\d{0,2}'))
+          FilteringTextInputFormatter.allow(RegExp(r'^-?(\d+)?\.?\d{0,2}')),
         ];
       case RegExpType.onlyNumber:
         return [FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))];
