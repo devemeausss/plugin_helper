@@ -524,6 +524,8 @@ class DateTimePickerModel extends CommonPickerModel {
   DateTime? maxTime;
   DateTime? minTime;
 
+  late DateTime _baseDay;
+
   DateTimePickerModel({
     DateTime? currentTime,
     DateTime? maxTime,
@@ -535,7 +537,7 @@ class DateTimePickerModel extends CommonPickerModel {
 
     var now = currentTime ?? DateTime.now();
 
-    // Clamp currentTime inside min/max
+    // Clamp initial time inside range
     if (this.minTime != null && now.isBefore(this.minTime!)) {
       now = this.minTime!;
     }
@@ -545,47 +547,52 @@ class DateTimePickerModel extends CommonPickerModel {
 
     this.currentTime = now;
 
-    _currentLeftIndex = 0;
+    // 🔥 BASE DAY MUST BE MIN DAY (not current day)
+    _baseDay = this.minTime != null
+        ? DateTime(this.minTime!.year, this.minTime!.month, this.minTime!.day)
+        : DateTime(now.year, now.month, now.day);
+
+    // Calculate selected day index relative to base day
+    _currentLeftIndex = DateTime(
+      now.year,
+      now.month,
+      now.day,
+    ).difference(_baseDay).inDays;
+
     _currentMiddleIndex = now.hour;
     _currentRightIndex = now.minute;
 
     _clampToRange();
   }
 
-  /// Proper calendar day comparison
-  bool isAtSameDay(DateTime? d1, DateTime? d2) {
-    if (d1 == null || d2 == null) return false;
-    return d1.year == d2.year && d1.month == d2.month && d1.day == d2.day;
+  bool _isSameDay(DateTime a, DateTime b) {
+    return a.year == b.year && a.month == b.month && a.day == b.day;
   }
 
-  /// Ensure hour/minute indexes stay inside valid range
+  DateTime _selectedDay() {
+    return _baseDay.add(Duration(days: _currentLeftIndex));
+  }
+
   void _clampToRange() {
-    DateTime selectedDay = currentTime.add(Duration(days: _currentLeftIndex));
+    DateTime day = _selectedDay();
 
-    // MIN restriction
-    if (minTime != null && isAtSameDay(minTime, selectedDay)) {
-      if (_currentMiddleIndex < minTime!.hour) {
-        _currentMiddleIndex = minTime!.hour;
-        _currentRightIndex = minTime!.minute;
-      }
+    // Clamp full datetime
+    DateTime candidate = DateTime(
+      day.year,
+      day.month,
+      day.day,
+      _currentMiddleIndex,
+      _currentRightIndex,
+    );
 
-      if (_currentMiddleIndex == minTime!.hour &&
-          _currentRightIndex < minTime!.minute) {
-        _currentRightIndex = minTime!.minute;
-      }
+    if (minTime != null && candidate.isBefore(minTime!)) {
+      _currentMiddleIndex = minTime!.hour;
+      _currentRightIndex = minTime!.minute;
     }
 
-    // MAX restriction
-    if (maxTime != null && isAtSameDay(maxTime, selectedDay)) {
-      if (_currentMiddleIndex > maxTime!.hour) {
-        _currentMiddleIndex = maxTime!.hour;
-        _currentRightIndex = maxTime!.minute;
-      }
-
-      if (_currentMiddleIndex == maxTime!.hour &&
-          _currentRightIndex > maxTime!.minute) {
-        _currentRightIndex = maxTime!.minute;
-      }
+    if (maxTime != null && candidate.isAfter(maxTime!)) {
+      _currentMiddleIndex = maxTime!.hour;
+      _currentRightIndex = maxTime!.minute;
     }
 
     _currentMiddleIndex = _currentMiddleIndex.clamp(0, 23);
@@ -612,32 +619,32 @@ class DateTimePickerModel extends CommonPickerModel {
 
   @override
   String? leftStringAtIndex(int index) {
-    DateTime time = currentTime.add(Duration(days: index));
+    DateTime day = _baseDay.add(Duration(days: index));
 
-    if (minTime != null &&
-        time.isBefore(DateTime(minTime!.year, minTime!.month, minTime!.day))) {
-      return null;
+    if (minTime != null) {
+      DateTime minDay = DateTime(minTime!.year, minTime!.month, minTime!.day);
+      if (day.isBefore(minDay)) return null;
     }
 
-    if (maxTime != null &&
-        time.isAfter(DateTime(maxTime!.year, maxTime!.month, maxTime!.day))) {
-      return null;
+    if (maxTime != null) {
+      DateTime maxDay = DateTime(maxTime!.year, maxTime!.month, maxTime!.day);
+      if (day.isAfter(maxDay)) return null;
     }
 
-    return formatDate(time, [ymdw], locale);
+    return formatDate(day, [ymdw], locale);
   }
 
   @override
   String? middleStringAtIndex(int index) {
     if (index < 0 || index > 23) return null;
 
-    DateTime selectedDay = currentTime.add(Duration(days: _currentLeftIndex));
+    DateTime day = _selectedDay();
 
-    if (minTime != null && isAtSameDay(minTime, selectedDay)) {
+    if (minTime != null && _isSameDay(day, minTime!)) {
       if (index < minTime!.hour) return null;
     }
 
-    if (maxTime != null && isAtSameDay(maxTime, selectedDay)) {
+    if (maxTime != null && _isSameDay(day, maxTime!)) {
       if (index > maxTime!.hour) return null;
     }
 
@@ -648,16 +655,16 @@ class DateTimePickerModel extends CommonPickerModel {
   String? rightStringAtIndex(int index) {
     if (index < 0 || index > 59) return null;
 
-    DateTime selectedDay = currentTime.add(Duration(days: _currentLeftIndex));
+    DateTime day = _selectedDay();
 
     if (minTime != null &&
-        isAtSameDay(minTime, selectedDay) &&
+        _isSameDay(day, minTime!) &&
         _currentMiddleIndex == minTime!.hour) {
       if (index < minTime!.minute) return null;
     }
 
     if (maxTime != null &&
-        isAtSameDay(maxTime, selectedDay) &&
+        _isSameDay(day, maxTime!) &&
         _currentMiddleIndex == maxTime!.hour) {
       if (index > maxTime!.minute) return null;
     }
@@ -667,12 +674,12 @@ class DateTimePickerModel extends CommonPickerModel {
 
   @override
   DateTime finalTime() {
-    DateTime selectedDay = currentTime.add(Duration(days: _currentLeftIndex));
+    DateTime day = _selectedDay();
 
     DateTime result = DateTime(
-      selectedDay.year,
-      selectedDay.month,
-      selectedDay.day,
+      day.year,
+      day.month,
+      day.day,
       _currentMiddleIndex,
       _currentRightIndex,
     );
