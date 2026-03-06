@@ -53,7 +53,7 @@ class MyWidgetAppGridView<T> extends StatefulWidget {
   final Widget? customHeaderRefresh;
 
   const MyWidgetAppGridView({
-    Key? key,
+    super.key,
     required this.data,
     required this.renderItem,
     this.crossAxisSpacing = 12,
@@ -70,7 +70,7 @@ class MyWidgetAppGridView<T> extends StatefulWidget {
     this.shrinkWrap = false,
     this.padding,
     this.customHeaderRefresh,
-  }) : super(key: key);
+  });
   @override
   _AppGridViewState createState() => _AppGridViewState();
 }
@@ -96,9 +96,9 @@ class _AppGridViewState extends State<MyWidgetAppGridView> {
       header: kIsWeb
           ? null
           : widget.customHeaderRefresh ??
-              (Platform.isIOS
-                  ? const ClassHeaderGridIndicator()
-                  : const MaterialClassicHeader()),
+                (Platform.isIOS
+                    ? const ClassHeaderGridIndicator()
+                    : const MaterialClassicHeader()),
       onRefresh: () {
         widget.onRefresh();
       },
@@ -109,19 +109,19 @@ class _AppGridViewState extends State<MyWidgetAppGridView> {
           crossAxisCount: widget.crossAxisCount,
           childAspectRatio: widget.childAspectRatio,
         ),
+        physics: ClampingScrollPhysics(),
         padding: widget.padding,
         shrinkWrap: widget.shrinkWrap,
         controller: _controller,
         itemBuilder: (context, index) {
           if (index == widget.data.length) {
-            return Center(
-              child: widget.loadingMoreWidget,
-            );
+            return Center(child: widget.loadingMoreWidget);
           }
           return widget.renderItem(index);
         },
-        itemCount:
-            widget.isLoadingMore ? widget.data.length + 1 : widget.data.length,
+        itemCount: widget.isLoadingMore
+            ? widget.data.length + 1
+            : widget.data.length,
       ),
     );
   }
@@ -139,14 +139,15 @@ class _AppGridViewState extends State<MyWidgetAppGridView> {
 }
 
 class ClassHeaderIndicator extends StatelessWidget {
-  const ClassHeaderIndicator({Key? key}) : super(key: key);
+  const ClassHeaderIndicator({super.key});
 
   @override
   Widget build(BuildContext context) {
     return ClassicHeader(
-        refreshingText: MyPluginMessageRequire.refreshingText,
-        completeText: MyPluginMessageRequire.completeText,
-        releaseText: MyPluginMessageRequire.releaseText,
-        idleText: MyPluginMessageRequire.idleText);
+      refreshingText: MyPluginMessageRequire.refreshingText,
+      completeText: MyPluginMessageRequire.completeText,
+      releaseText: MyPluginMessageRequire.releaseText,
+      idleText: MyPluginMessageRequire.idleText,
+    );
   }
 }

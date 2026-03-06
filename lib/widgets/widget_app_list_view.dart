@@ -68,7 +68,7 @@ class MyWidgetAppListView<T> extends StatefulWidget {
   final Widget? customHeaderRefresh;
 
   const MyWidgetAppListView({
-    Key? key,
+    super.key,
     required this.data,
     this.onLoadMore,
     this.scrollDirection = Axis.vertical,
@@ -88,7 +88,7 @@ class MyWidgetAppListView<T> extends StatefulWidget {
     this.onScrollListener,
     required this.loadingWidget,
     this.customHeaderRefresh,
-  }) : super(key: key);
+  });
   @override
   AppListViewState createState() => AppListViewState();
 }
@@ -116,20 +116,21 @@ class AppListViewState extends State<MyWidgetAppListView> {
   Widget build(BuildContext context) {
     if (widget.refreshController != null) {
       return SmartRefresher(
-          controller: widget.refreshController!,
-          enablePullDown: widget.enablePullDown,
-          header: kIsWeb
-              ? null
-              : widget.customHeaderRefresh ??
+        controller: widget.refreshController!,
+        enablePullDown: widget.enablePullDown,
+        header: kIsWeb
+            ? null
+            : widget.customHeaderRefresh ??
                   (Platform.isIOS
                       ? const ClassHeaderGridIndicator()
                       : const MaterialClassicHeader()),
-          onRefresh: () {
-            if (widget.onRefresh != null) {
-              widget.onRefresh!();
-            }
-          },
-          child: _listView());
+        onRefresh: () {
+          if (widget.onRefresh != null) {
+            widget.onRefresh!();
+          }
+        },
+        child: _listView(),
+      );
     }
     return _switchDirection();
   }
@@ -145,44 +146,41 @@ class AppListViewState extends State<MyWidgetAppListView> {
   }
 
   Widget _listView() => ListView.separated(
-        padding: widget.padding,
-        physics: widget.isNeverScroll
-            ? const NeverScrollableScrollPhysics()
-            : const BouncingScrollPhysics(),
-        addAutomaticKeepAlives: true,
-        scrollDirection: widget.scrollDirection,
-        controller: _controller,
-        reverse: widget.reverse,
-        shrinkWrap: true,
-        itemBuilder: (context, index) {
-          if (index == widget.data.length) {
-            return Center(child: widget.loadingWidget);
-          }
-          if (widget.scrollDirection == Axis.horizontal) {
-            return Row(children: [
-              if (index == 0) SizedBox(width: widget.paddingHorizontal),
-              widget.renderItem(index),
-              if (index == widget.data.length - 1)
-                SizedBox(width: widget.paddingHorizontal),
-            ]);
-          }
-          return widget.renderItem(index);
-        },
-        itemCount:
-            widget.isLoadingMore ? widget.data.length + 1 : widget.data.length,
-        separatorBuilder: (BuildContext context, int index) {
-          if (widget.scrollDirection == Axis.horizontal) {
-            return widget.separatorBuilder ??
-                SizedBox(
-                  width: widget.separatorItem,
-                );
-          }
-          return widget.separatorBuilder ??
-              SizedBox(
-                height: widget.separatorItem,
-              );
-        },
-      );
+    padding: widget.padding,
+    physics: widget.isNeverScroll
+        ? const NeverScrollableScrollPhysics()
+        : const ClampingScrollPhysics(),
+    addAutomaticKeepAlives: true,
+    scrollDirection: widget.scrollDirection,
+    controller: _controller,
+    reverse: widget.reverse,
+    shrinkWrap: true,
+    itemBuilder: (context, index) {
+      if (index == widget.data.length) {
+        return Center(child: widget.loadingWidget);
+      }
+      if (widget.scrollDirection == Axis.horizontal) {
+        return Row(
+          children: [
+            if (index == 0) SizedBox(width: widget.paddingHorizontal),
+            widget.renderItem(index),
+            if (index == widget.data.length - 1)
+              SizedBox(width: widget.paddingHorizontal),
+          ],
+        );
+      }
+      return widget.renderItem(index);
+    },
+    itemCount: widget.isLoadingMore
+        ? widget.data.length + 1
+        : widget.data.length,
+    separatorBuilder: (BuildContext context, int index) {
+      if (widget.scrollDirection == Axis.horizontal) {
+        return widget.separatorBuilder ?? SizedBox(width: widget.separatorItem);
+      }
+      return widget.separatorBuilder ?? SizedBox(height: widget.separatorItem);
+    },
+  );
 
   void _scrollListener() {
     if (widget.onScrollListener != null) {
@@ -197,14 +195,15 @@ class AppListViewState extends State<MyWidgetAppListView> {
 }
 
 class ClassHeaderGridIndicator extends StatelessWidget {
-  const ClassHeaderGridIndicator({Key? key}) : super(key: key);
+  const ClassHeaderGridIndicator({super.key});
 
   @override
   Widget build(BuildContext context) {
     return ClassicHeader(
-        refreshingText: MyPluginMessageRequire.refreshingText,
-        completeText: MyPluginMessageRequire.completeText,
-        releaseText: MyPluginMessageRequire.releaseText,
-        idleText: MyPluginMessageRequire.idleText);
+      refreshingText: MyPluginMessageRequire.refreshingText,
+      completeText: MyPluginMessageRequire.completeText,
+      releaseText: MyPluginMessageRequire.releaseText,
+      idleText: MyPluginMessageRequire.idleText,
+    );
   }
 }
