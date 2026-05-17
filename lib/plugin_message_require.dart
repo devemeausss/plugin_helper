@@ -52,6 +52,7 @@ class MyPluginMessageRequire {
     String? messageMinute,
     String? messageSecond,
     String? cannotPlayVideo,
+    String? messageStrongPassword,
   }) {
     noConnection = messageNoConnection;
     canNotLaunchURL = messageCanNotLaunchURL;
@@ -76,5 +77,6 @@ class MyPluginMessageRequire {
     minute = messageMinute ?? minute;
     second = messageSecond ?? second;
     cannotPlayVideo = cannotPlayVideo ?? cannotPlayVideo;
+    strongPassword = messageStrongPassword ?? strongPassword;
   }
 }
