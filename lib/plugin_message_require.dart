@@ -9,6 +9,8 @@ class MyPluginMessageRequire {
   static String emptyData = 'No data found';
   static String reconnecting = 'Reconnecting...';
   static String weakPassword = 'Weak password';
+  static String strongPassword =
+      'Password must be at least 8 characters long and include at least 1 number and 1 special character';
   static String invalidEmail = 'Invalid email address';
   static String canNotEmpty = 'This field cannot be empty';
   static String downloading = 'Downloading';
@@ -25,7 +27,7 @@ class MyPluginMessageRequire {
   static String second = 'second';
   static String cannotPlayVideo = "Can't play video";
 
-  static messageRequire({
+  static void messageRequire({
     required String messageNoConnection,
     required String messageCanNotLaunchURL,
     required String messageRefreshingText,

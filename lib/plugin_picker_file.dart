@@ -15,13 +15,16 @@ class MyPluginPickerFile {
     return null;
   }
 
-  static Future<XFile?>? recordVideo(
-      {required BuildContext context,
-      CameraDevice cameraDevice = CameraDevice.front,
-      required Function(String code) onError}) async {
+  static Future<XFile?>? recordVideo({
+    required BuildContext context,
+    CameraDevice cameraDevice = CameraDevice.front,
+    required Function(String code) onError,
+  }) async {
     try {
       final videoFile = await ImagePicker().pickVideo(
-          source: ImageSource.camera, preferredCameraDevice: cameraDevice);
+        source: ImageSource.camera,
+        preferredCameraDevice: cameraDevice,
+      );
       return videoFile;
     } catch (error) {
       if (error is PlatformException) {
@@ -33,12 +36,13 @@ class MyPluginPickerFile {
     return null;
   }
 
-  static Future<XFile?>? pickSingleMedia(
-      {required BuildContext context,
-      double? maxWidth,
-      double? maxHeight,
-      int? imageQuality,
-      required Function(String code) onError}) async {
+  static Future<XFile?>? pickSingleMedia({
+    required BuildContext context,
+    double? maxWidth,
+    double? maxHeight,
+    int? imageQuality,
+    required Function(String code) onError,
+  }) async {
     try {
       final videoFile = await ImagePicker().pickMedia(
         imageQuality: imageQuality,
@@ -56,12 +60,13 @@ class MyPluginPickerFile {
     return null;
   }
 
-  static Future<List<XFile>> pickMultipleMedia(
-      {required BuildContext context,
-      double? maxWidth,
-      double? maxHeight,
-      int? imageQuality,
-      required Function(String code) onError}) async {
+  static Future<List<XFile>> pickMultipleMedia({
+    required BuildContext context,
+    double? maxWidth,
+    double? maxHeight,
+    int? imageQuality,
+    required Function(String code) onError,
+  }) async {
     try {
       final videoFile = await ImagePicker().pickMultipleMedia(
         imageQuality: imageQuality,
@@ -89,10 +94,11 @@ class MyPluginPickerFile {
   }) async {
     try {
       final imageFile = await ImagePicker().pickImage(
-          source: isCamera ? ImageSource.camera : ImageSource.gallery,
-          imageQuality: imageQuality,
-          maxWidth: maxWidth,
-          maxHeight: maxHeight);
+        source: isCamera ? ImageSource.camera : ImageSource.gallery,
+        imageQuality: imageQuality,
+        maxWidth: maxWidth,
+        maxHeight: maxHeight,
+      );
       return imageFile;
     } catch (error) {
       if (error is PlatformException) {
@@ -118,7 +124,10 @@ class MyPluginPickerFile {
         onStartLoading();
       }
       final pickedFileList = await ImagePicker().pickMultiImage(
-          imageQuality: imageQuality, maxWidth: maxWidth, maxHeight: maxHeight);
+        imageQuality: imageQuality,
+        maxWidth: maxWidth,
+        maxHeight: maxHeight,
+      );
       return pickedFileList;
     } catch (error) {
       if (error is PlatformException) {
