@@ -33,8 +33,11 @@ class MyWidgetError extends StatelessWidget {
   /// Customize a header indicator displace before content. Only for Android/iOS.
   final Widget? customHeaderRefresh;
 
+  /// Custom widget
+  final Widget? child;
+
   const MyWidgetError({
-    Key? key,
+    super.key,
     this.crossAxisAlignment = CrossAxisAlignment.center,
     this.mainAxisAlignment = MainAxisAlignment.center,
     required this.error,
@@ -44,21 +47,18 @@ class MyWidgetError extends StatelessWidget {
     this.iconError,
     this.enablePullDown = true,
     this.customHeaderRefresh,
-  }) : super(key: key);
+    this.child,
+  });
 
   @override
   Widget build(BuildContext context) {
-    var child = Column(
+    var childWidget = Column(
       mainAxisAlignment: mainAxisAlignment,
       crossAxisAlignment: crossAxisAlignment,
       children: [
         iconError ?? const Icon(Icons.error_outline, size: 20),
         5.h,
-        Text(
-          error,
-          textAlign: TextAlign.center,
-          style: textStyle,
-        )
+        Text(error, textAlign: TextAlign.center, style: textStyle),
       ],
     );
 
@@ -68,15 +68,15 @@ class MyWidgetError extends StatelessWidget {
         header: kIsWeb
             ? null
             : customHeaderRefresh ??
-                (Platform.isIOS
-                    ? const ClassHeaderGridIndicator()
-                    : const MaterialClassicHeader()),
+                  (Platform.isIOS
+                      ? const ClassHeaderGridIndicator()
+                      : const MaterialClassicHeader()),
         onRefresh: onRefresh,
         controller: refreshController!,
-        child: child,
+        child: child ?? childWidget,
       );
     }
 
-    return child;
+    return child ?? childWidget;
   }
 }

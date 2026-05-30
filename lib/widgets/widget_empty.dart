@@ -33,22 +33,26 @@ class MyWidgetEmpty extends StatelessWidget {
   /// This bool will affect whether or not to have the function of drop-down refresh.
   final bool enablePullDown;
 
-  const MyWidgetEmpty(
-      {Key? key,
-      this.mainAxisAlignment = MainAxisAlignment.center,
-      this.message,
-      required this.textStyle,
-      this.icon,
-      this.crossAxisAlignment = CrossAxisAlignment.center,
-      this.onRefresh,
-      this.refreshController,
-      this.customHeaderRefresh,
-      this.enablePullDown = true})
-      : super(key: key);
+  /// Custom widget
+  final Widget? child;
+
+  const MyWidgetEmpty({
+    super.key,
+    this.mainAxisAlignment = MainAxisAlignment.center,
+    this.message,
+    required this.textStyle,
+    this.icon,
+    this.crossAxisAlignment = CrossAxisAlignment.center,
+    this.onRefresh,
+    this.refreshController,
+    this.customHeaderRefresh,
+    this.enablePullDown = true,
+    this.child,
+  });
 
   @override
   Widget build(BuildContext context) {
-    var child = Column(
+    var childWidget = Column(
       mainAxisAlignment: mainAxisAlignment,
       crossAxisAlignment: crossAxisAlignment,
       children: [
@@ -58,7 +62,7 @@ class MyWidgetEmpty extends StatelessWidget {
           message ?? MyPluginMessageRequire.emptyData,
           style: textStyle,
           textAlign: TextAlign.center,
-        )
+        ),
       ],
     );
 
@@ -69,14 +73,14 @@ class MyWidgetEmpty extends StatelessWidget {
         header: kIsWeb
             ? null
             : customHeaderRefresh ??
-                (Platform.isIOS
-                    ? const ClassHeaderGridIndicator()
-                    : const MaterialClassicHeader()),
+                  (Platform.isIOS
+                      ? const ClassHeaderGridIndicator()
+                      : const MaterialClassicHeader()),
         controller: refreshController!,
-        child: child,
+        child: child ?? childWidget,
       );
     }
 
-    return child;
+    return child ?? childWidget;
   }
 }
