@@ -1,9 +1,5 @@
-import 'dart:io';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:plugin_helper/plugin_message_require.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:plugin_helper/index.dart';
 
 /// MyWidgetAppListView is the most commonly used scrolling customize widget.
 /// It displays its children one after another in the scroll direction.
@@ -29,9 +25,6 @@ class MyWidgetAppListView<T> extends StatefulWidget {
 
   /// Trigger when the user pull to refresh page if [refreshController] not null.
   final VoidCallback? onRefresh;
-
-  /// A controller control header and footer state, it can trigger driving request Refresh, set the initalRefresh, status if needed.
-  final RefreshController? refreshController;
 
   /// A separation evenly between each item. Default is 24.0
   final double separatorItem;
@@ -76,7 +69,6 @@ class MyWidgetAppListView<T> extends StatefulWidget {
     this.enablePullDown = true,
     this.isNeverScroll = false,
     this.onRefresh,
-    this.refreshController,
     this.separatorItem = 24.0,
     this.padding,
     this.separatorBuilder,
@@ -114,17 +106,9 @@ class AppListViewState extends State<MyWidgetAppListView> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.refreshController != null) {
-      return SmartRefresher(
-        controller: widget.refreshController!,
-        enablePullDown: widget.enablePullDown,
-        header: kIsWeb
-            ? null
-            : widget.customHeaderRefresh ??
-                  (Platform.isIOS
-                      ? const ClassHeaderGridIndicator()
-                      : const MaterialClassicHeader()),
-        onRefresh: () {
+    if (widget.enablePullDown) {
+      return CustomMaterialIndicator(
+        onRefresh: () async {
           if (widget.onRefresh != null) {
             widget.onRefresh!();
           }
@@ -191,19 +175,5 @@ class AppListViewState extends State<MyWidgetAppListView> {
             _controller.position.maxScrollExtent * 0.8) {
       widget.onLoadMore!();
     }
-  }
-}
-
-class ClassHeaderGridIndicator extends StatelessWidget {
-  const ClassHeaderGridIndicator({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return ClassicHeader(
-      refreshingText: MyPluginMessageRequire.refreshingText,
-      completeText: MyPluginMessageRequire.completeText,
-      releaseText: MyPluginMessageRequire.releaseText,
-      idleText: MyPluginMessageRequire.idleText,
-    );
   }
 }

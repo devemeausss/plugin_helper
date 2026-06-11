@@ -1,6 +1,7 @@
 export 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 export 'package:cached_network_image/cached_network_image.dart';
 export 'package:collection/collection.dart';
+export 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 export 'package:dio/dio.dart';
 export 'package:equatable/equatable.dart';
 export 'package:file_picker/file_picker.dart';
@@ -17,7 +18,6 @@ export 'package:package_info_plus/package_info_plus.dart';
 export 'package:path_provider/path_provider.dart';
 export 'package:permission_handler/permission_handler.dart';
 export 'package:pin_code_fields/pin_code_fields.dart';
-export 'package:pull_to_refresh/pull_to_refresh.dart';
 export 'package:share_plus/share_plus.dart';
 export 'package:shared_preferences/shared_preferences.dart';
 export 'package:url_launcher/url_launcher.dart';

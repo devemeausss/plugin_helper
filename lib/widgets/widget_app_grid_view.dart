@@ -1,6 +1,3 @@
-import 'dart:io';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:plugin_helper/index.dart';
 
@@ -25,9 +22,6 @@ class MyWidgetAppGridView<T> extends StatefulWidget {
 
   /// Return [ScrollController] when user scrolls the list.
   final VoidCallback? onScrollListener;
-
-  /// A controller control header and footer state, it can trigger driving request Refresh, set the initalRefresh, status if needed.
-  final RefreshController refreshController;
 
   /// Trigger when the user pull to refresh page if [refreshController] not null.
   final VoidCallback onRefresh;
@@ -61,7 +55,6 @@ class MyWidgetAppGridView<T> extends StatefulWidget {
     this.crossAxisCount = 2,
     this.childAspectRatio = 1 / 1.5,
     this.onLoadMore,
-    required this.refreshController,
     required this.onRefresh,
     this.isLoadingMore = false,
     required this.colorRefresh,
@@ -91,15 +84,8 @@ class _AppGridViewState extends State<MyWidgetAppGridView> {
 
   @override
   Widget build(BuildContext context) {
-    return SmartRefresher(
-      controller: widget.refreshController,
-      header: kIsWeb
-          ? null
-          : widget.customHeaderRefresh ??
-                (Platform.isIOS
-                    ? const ClassHeaderGridIndicator()
-                    : const MaterialClassicHeader()),
-      onRefresh: () {
+    return CustomMaterialIndicator(
+      onRefresh: () async {
         widget.onRefresh();
       },
       child: GridView.builder(
@@ -135,19 +121,5 @@ class _AppGridViewState extends State<MyWidgetAppGridView> {
         _controller.position.pixels > _controller.position.maxScrollExtent) {
       widget.onLoadMore!();
     }
-  }
-}
-
-class ClassHeaderIndicator extends StatelessWidget {
-  const ClassHeaderIndicator({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return ClassicHeader(
-      refreshingText: MyPluginMessageRequire.refreshingText,
-      completeText: MyPluginMessageRequire.completeText,
-      releaseText: MyPluginMessageRequire.releaseText,
-      idleText: MyPluginMessageRequire.idleText,
-    );
   }
 }

@@ -1,6 +1,5 @@
-import 'dart:io';
+import 'dart:nativewrappers/_internal/vm/lib/ffi_allocation_patch.dart';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:plugin_helper/index.dart';
 
@@ -17,9 +16,6 @@ class MyWidgetError extends StatelessWidget {
 
   /// A callback to be called when the user pull to refresh. If [refreshController] is active.
   final VoidCallback? onRefresh;
-
-  /// A controller control header and footer state, it can trigger driving request Refresh, set the initialRefresh, status if needed.
-  final RefreshController? refreshController;
 
   /// Change to a widget to show above [error]
   final Widget? iconError;
@@ -43,7 +39,6 @@ class MyWidgetError extends StatelessWidget {
     required this.error,
     required this.textStyle,
     this.onRefresh,
-    this.refreshController,
     this.iconError,
     this.enablePullDown = true,
     this.customHeaderRefresh,
@@ -62,17 +57,11 @@ class MyWidgetError extends StatelessWidget {
       ],
     );
 
-    if (refreshController != null) {
-      return SmartRefresher(
-        enablePullDown: enablePullDown,
-        header: kIsWeb
-            ? null
-            : customHeaderRefresh ??
-                  (Platform.isIOS
-                      ? const ClassHeaderGridIndicator()
-                      : const MaterialClassicHeader()),
-        onRefresh: onRefresh,
-        controller: refreshController!,
+    if (enablePullDown) {
+      return CustomMaterialIndicator(
+        onRefresh: () async {
+          onRefresh.call();
+        },
         child: child ?? childWidget,
       );
     }
