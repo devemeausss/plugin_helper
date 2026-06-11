@@ -1,5 +1,3 @@
-import 'dart:nativewrappers/_internal/vm/lib/ffi_allocation_patch.dart';
-
 import 'package:flutter/material.dart';
 import 'package:plugin_helper/index.dart';
 
@@ -60,7 +58,7 @@ class MyWidgetError extends StatelessWidget {
     if (enablePullDown) {
       return CustomMaterialIndicator(
         onRefresh: () async {
-          onRefresh.call();
+          onRefresh?.call();
         },
         child: child ?? childWidget,
       );
