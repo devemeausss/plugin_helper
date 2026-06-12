@@ -30,9 +30,6 @@ class MyWidgetAppGridView<T> extends StatefulWidget {
   /// and the application triggered a request function to get more data from the server.
   final bool isLoadingMore;
 
-  /// Set color of the refresher.
-  final Color colorRefresh;
-
   /// Display a widget when the user scrolled to the end of the list
   /// and the application triggered a request function to get more data from the server.
   final Widget loadingMoreWidget;
@@ -57,7 +54,6 @@ class MyWidgetAppGridView<T> extends StatefulWidget {
     this.onLoadMore,
     required this.onRefresh,
     this.isLoadingMore = false,
-    required this.colorRefresh,
     required this.loadingMoreWidget,
     this.onScrollListener,
     this.shrinkWrap = false,
