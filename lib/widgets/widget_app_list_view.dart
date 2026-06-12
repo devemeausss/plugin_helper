@@ -24,7 +24,7 @@ class MyWidgetAppListView<T> extends StatefulWidget {
   final bool isNeverScroll;
 
   /// Trigger when the user pull to refresh page if [refreshController] not null.
-  final VoidCallback? onRefresh;
+  final Future<void> Function()? onRefresh;
 
   /// A separation evenly between each item. Default is 24.0
   final double separatorItem;
@@ -110,7 +110,7 @@ class AppListViewState extends State<MyWidgetAppListView> {
       return CustomMaterialIndicator(
         onRefresh: () async {
           if (widget.onRefresh != null) {
-            widget.onRefresh!();
+            await widget.onRefresh!();
           }
         },
         child: _listView(),

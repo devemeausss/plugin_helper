@@ -24,7 +24,7 @@ class MyWidgetAppGridView<T> extends StatefulWidget {
   final VoidCallback? onScrollListener;
 
   /// Trigger when the user pull to refresh page if [refreshController] not null.
-  final VoidCallback onRefresh;
+  final Future<void> Function() onRefresh;
 
   /// Waiting for a response from the server when the user scrolled to the end of the list
   /// and the application triggered a request function to get more data from the server.
@@ -85,9 +85,7 @@ class _AppGridViewState extends State<MyWidgetAppGridView> {
   @override
   Widget build(BuildContext context) {
     return CustomMaterialIndicator(
-      onRefresh: () async {
-        widget.onRefresh();
-      },
+      onRefresh: widget.onRefresh,
       child: GridView.builder(
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisSpacing: widget.crossAxisSpacing,
